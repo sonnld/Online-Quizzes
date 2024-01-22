@@ -11,4 +11,5 @@ public interface IQuizzesService {
     boolean createQuiz(Quizzes quiz);
     Quizzes updateQuiz(Integer quizId, Quizzes quiz);
     boolean deleteQuiz(Integer quizId);
+
 }
