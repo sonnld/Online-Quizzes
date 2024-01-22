@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "Quizzes")
 @Getter
@@ -34,5 +36,6 @@ public class Quizzes {
 
     @Column(name = "IsCompleted")
     private Boolean isCompleted;
+
 
 }

@@ -2,6 +2,7 @@ package com.swp.online_quizz.Service;
 
 import com.swp.online_quizz.Entity.Answers;
 import com.swp.online_quizz.Entity.Questions;
+import com.swp.online_quizz.Repository.AnswersRepository;
 import com.swp.online_quizz.Repository.QuestionsRepository;
 import com.swp.online_quizz.Repository.QuizzesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class QuestionsService {
@@ -17,7 +19,11 @@ public class QuestionsService {
     @Autowired
     private AnswersService answersService;
 
-
+    @Transactional
+    public Questions getQuestionsByQuizzesId(Integer QuizzesId) {
+        Optional<Questions> optionalQuestions = questionsRepository.findById(QuizzesId);
+        return optionalQuestions.orElse(null);
+    }
 
     @Transactional
     public void deleteQuestion(Integer questionId) {

@@ -10,6 +10,6 @@ public interface IQuizzesService {
     Quizzes getQuizById(Integer quizId);
     boolean createQuiz(Quizzes quiz);
     Quizzes updateQuiz(Integer quizId, Quizzes quiz);
-    boolean deleteQuiz(Integer quizId);
+    void deleteQuiz(Integer quizId);
 
 }
