@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -30,4 +33,30 @@ public class Question {
     @Column(name = "VideoURL")
     private String videoURL;
 
+    @ManyToOne
+    @JoinColumn(name = "AnotherQuizID")
+    private Quiz quiz;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Answer> answers = new ArrayList<>();
+
+    public Question(Quiz quizID, String questionContent, String questionType, List<Answer> answers) {
+        this.quizID = quizID;
+        this.questionContent = questionContent;
+        this.questionType = questionType;
+        this.answers = answers;
+        initializeAnswers();
+    }
+
+    public Question() {
+
+    }
+
+    private void initializeAnswers() {
+        if (this.answers != null) {
+            for (Answer answer : this.answers) {
+                answer.setQuestion(this);
+            }
+        }
+    }
 }

@@ -13,7 +13,7 @@ import java.time.Instant;
 public class QuizAttempt {
     @Id
     @Column(name = "AttemptID", nullable = false)
-    private Integer id;
+    private Integer quizAttemptsId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UserID")

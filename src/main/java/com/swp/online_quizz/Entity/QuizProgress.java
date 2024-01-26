@@ -10,7 +10,7 @@ import lombok.Setter;
 public class QuizProgress {
     @Id
     @Column(name = "ProgressID", nullable = false)
-    private Integer id;
+    private Integer ProgressId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AttemptID")

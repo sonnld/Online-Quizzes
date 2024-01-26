@@ -25,4 +25,13 @@ public class Answer {
     @Column(name = "IsCorrect")
     private Boolean isCorrect;
 
+
+    public Answer(String answerContent, Boolean isCorrect) {
+        this.answerContent = answerContent;
+        this.isCorrect = isCorrect;
+    }
+
+    public Answer() {
+
+    }
 }
