@@ -31,7 +31,6 @@ public class Questions {
 
     @Column(name = "VideoURL")
     private String videoUrl;
-
     @ManyToOne
     @JoinColumn(name = "quiz_id")
     private Quizzes quiz;
