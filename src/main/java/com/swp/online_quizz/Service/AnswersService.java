@@ -6,6 +6,7 @@ import com.swp.online_quizz.Repository.AnswersRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,5 +21,12 @@ public class AnswersService {
     public Answers getAnswerByQuesId(Integer questionId) {
         Optional<Answers> optionalAnswers = answersRepository.findById(questionId);
         return optionalAnswers.orElse(null);
+    }
+    @Transactional
+    public void deleteAnswersByQuestionId(Integer questionId) {
+        List<Answers> answers = answersRepository.findByquestionId(questionId);
+        for (Answers answer : answers) {
+            answersRepository.deleteById(answer.getAnswerId());
+        }
     }
 }

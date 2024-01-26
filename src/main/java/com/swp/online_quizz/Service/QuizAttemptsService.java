@@ -13,8 +13,8 @@ public class QuizAttemptsService {
     @Autowired
     private QuizAttemptsRepository quizAttemptRepository;
 
-    public void deleteAttemptsByQuizId(Long quizId) {
-        List<QuizAttempts> attempts = quizAttemptRepository.findByQuizId(quizId);
+    public void deleteAttemptsByQuizId(Integer quizId) {
+        List<QuizAttempts> attempts = quizAttemptRepository.findByquizId(quizId);
         for (QuizAttempts attempt : attempts) {
             quizAttemptRepository.deleteById(attempt.getAttemptId());
         }

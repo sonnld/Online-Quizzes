@@ -1,9 +1,6 @@
 package com.swp.online_quizz.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,4 +32,7 @@ public class Questions {
     @Column(name = "VideoURL")
     private String videoUrl;
 
+    @ManyToOne
+    @JoinColumn(name = "quiz_id")
+    private Quizzes quiz;
 }

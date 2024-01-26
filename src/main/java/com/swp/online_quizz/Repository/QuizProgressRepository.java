@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface QuizProgressRepository extends JpaRepository<QuizProgress, Long> {
-    List<QuizProgress> findByQuizId(Long quizId);
+public interface QuizProgressRepository extends JpaRepository<QuizProgress, Integer> {
+    List<QuizProgress> findByquizId(Integer quizId);
 }

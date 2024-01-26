@@ -4,7 +4,7 @@ import com.swp.online_quizz.Entity.Questions;
 import com.swp.online_quizz.Entity.Quizzes;
 import com.swp.online_quizz.Repository.QuizzesRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.aspectj.weaver.patterns.TypePatternQuestions;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,15 +12,23 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 @Service
-public class QuizzesServiceImpl implements IQuizzesService {
+public class QuizzesService implements IQuizzesService {
     @Autowired
     private QuizzesRepository quizzesRepository;
     @Autowired
     private QuestionsService questionsService;
     @Autowired
     private AnswersService answersService;
+    @Autowired
+    private QuizAttemptsService quizAttemptsService;
+    @Autowired
+    private FeedbackService feedbackService;
+    @Autowired
+    private QuizProgressService quizProgressService;
+
     @Override
     public List<Quizzes> getAllQuizzes() {
+
         return quizzesRepository.findAll();
     }
     @Override
@@ -65,21 +73,25 @@ public class QuizzesServiceImpl implements IQuizzesService {
             deleteRelatedData(quiz);
 
             // Sau đó xóa quiz
-            quizzesRepository.deleteById(quizId);
+             quizzesRepository.deleteById(quizId);
         }
     }
 
     // Xóa dữ liệu trong các bảng liên quan
     private void deleteRelatedData(Quizzes quiz) {
-        List<Questions> questions = quiz.getQuestions();
+        //List<Questions> questions = quiz.getQuestions();
+        Quizzes quizzes = new Quizzes();
+        List<Questions> questions = quizzes.getQuestions();
         for (Questions question : questions) {
-            // Xóa dữ liệu trong các bảng liên quan đến câu hỏi
-            answersService.deleteAnswersByQuesId(question.getQuestionId());
-            // Add other methods to delete data in other related tables if needed
-            // questionService.deleteQuestion(question.getQuestionId()); // already handled in deleteQuiz
+            // Xóa dữ liệu trong bảng liên quan đến câu hỏi
+            answersService.deleteAnswersByQuestionId(question.getQuestionId());
         }
 
-        // Add other methods to delete data in other related tables if needed
+        // Xóa dữ liệu trong các bảng liên quan đến Quiz
+        quizAttemptsService.deleteAttemptsByQuizId(quiz.getQuizId());
+        feedbackService.deleteFeedbacksByQuizId(quiz.getQuizId());
+        quizProgressService.deleteProgressByQuizId(quiz.getQuizId());
+
     }
 }
 

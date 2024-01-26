@@ -4,5 +4,5 @@ import com.swp.online_quizz.Entity.Quizzes;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface QuizzesRepository extends JpaRepository<Quizzes, Integer> {
-    // Các phương thức tìm kiếm, thêm, xoá Quiz
+
 }

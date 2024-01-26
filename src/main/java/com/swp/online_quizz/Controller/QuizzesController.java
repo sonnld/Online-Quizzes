@@ -34,8 +34,8 @@ public class QuizzesController {
     }
 
     @DeleteMapping("/delete/{quizId}")
-    public boolean deleteQuiz(@PathVariable Integer quizId) {
+    public void deleteQuiz(@PathVariable Integer quizId) {
 
-        return iQuizzesService.deleteQuiz(quizId);
+         iQuizzesService.deleteQuiz(quizId);
     }
 }
