@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/quiz")
@@ -32,14 +33,32 @@ public class QuizController
     public List<Quiz> getAll(){
         return iQuizService.getALl();
     }
-    @PostMapping("/create")
-    public Quiz createQuiz(
-            @RequestParam String quizName,
-            @RequestParam Integer timeLimit,
-            @RequestParam Subject subject,
-            @RequestParam Integer teacherId,
-            @RequestBody List<Question> questions) {
+    @PostMapping("/create/{quizName}/{timeLimit}/{subjectName}/{teacherId}")
+    public ResponseEntity<Quiz> createQuiz(
+            @PathVariable String quizName,
+            @PathVariable Integer timeLimit,
+            @PathVariable String subjectName,
+            @PathVariable Integer teacherId) {
 
-        return quizService.createQuiz(quizName, timeLimit, subject, teacherId, questions);
+        try {
+            Quiz createdQuiz = quizService.createQuiz(quizName, timeLimit, subjectName, teacherId);
+            return new ResponseEntity<>(createdQuiz, HttpStatus.CREATED);
+        } catch (Exception e) {
+
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @PutMapping("/update/{quizName}/{newQuizName}/{newTimeLimit}/{newIsCompleted}")
+
+    public ResponseEntity<Quiz> updateQuiz(
+            @PathVariable String quizName,
+            @PathVariable String newQuizName,
+            @PathVariable Integer newTimeLimit,
+            @PathVariable Boolean newIsCompleted
+    ) {
+        Optional<Quiz> updatedQuiz = quizService.updateQuizByQuizName(quizName, newQuizName, newTimeLimit, newIsCompleted);
+
+        return updatedQuiz.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

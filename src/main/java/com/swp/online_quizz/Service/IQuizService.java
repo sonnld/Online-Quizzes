@@ -1,13 +1,16 @@
 package com.swp.online_quizz.Service;
 
-import com.swp.online_quizz.Entity.Question;
 import com.swp.online_quizz.Entity.Quiz;
-import com.swp.online_quizz.Entity.Subject;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IQuizService {
     List<Quiz> getALl();
 
-    Quiz createQuiz(String quizName, Integer timeLimit, Subject subject, Integer teacherId, List<Question> questions);
+    Quiz createQuiz(String quizName, Integer timeLimit, String subject, Integer teacherId);
+
+
+    Optional<Quiz> updateQuizByQuizName(String quizName, String newQuizName,
+                                        Integer newTimeLimit, Boolean newIsCompleted);
 }

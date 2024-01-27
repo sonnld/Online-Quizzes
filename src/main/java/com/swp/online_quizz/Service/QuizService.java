@@ -1,17 +1,17 @@
 package com.swp.online_quizz.Service;
 
-import com.swp.online_quizz.Entity.Answer;
-import com.swp.online_quizz.Entity.Question;
 import com.swp.online_quizz.Entity.Quiz;
 import com.swp.online_quizz.Entity.Subject;
+import com.swp.online_quizz.Entity.User;
 import com.swp.online_quizz.Repository.QuizRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class QuizService implements IQuizService{
@@ -33,39 +33,29 @@ public class QuizService implements IQuizService{
     }
     public Quiz getQuizById(Integer quizId) {
         return quizRepository.findById(quizId)
-                .orElseThrow(() -> new RuntimeException("Bài kiểm tra không tồn tại với ID: " + quizId));
+                .orElseThrow(() -> new RuntimeException("Not found ID: " + quizId));
     }
+
     @Override
-    public Quiz createQuiz(String quizName, Integer timeLimit, Subject subject, Integer teacherId, List<Question> questions) {
+    public Quiz createQuiz(String quizName, Integer timeLimit, String subjectName,
+                           Integer teacherId) {
+        Subject existingSubject = subjectService.createOrUpdateSubject(subjectName);
+        User teacher = userService.getUserById(teacherId);
 
-
-        Subject existingSubject = subjectService.createOrUpdateSubject(subject);
-        User teacher = (User) userService.getUserById(teacherId);
-
-        Quiz quiz = new Quiz();
-        quiz.setQuizName(quizName);
-        quiz.setTimeLimit(timeLimit);
-        quiz.setSubject(existingSubject);
-        quiz.setTeacher((com.swp.online_quizz.Entity.User) teacher);
-        quiz.setIsCompleted(false);
-
+        Quiz quiz = new Quiz(teacher,existingSubject,quizName,timeLimit,false);
         Quiz savedQuiz = quizRepository.save(quiz);
-
-        for (Question question : questions) {
-            question.setQuiz(savedQuiz);
-            Question savedQuestion = questionService.createQuestion(question, quiz.getId());
-
-            List<Answer> answers = question.getAnswers();
-            for (Answer answer : answers) {
-                answer.setQuestion(savedQuestion);
-                answerSevice.createAnswer(answer, question.getId());
-            }
-        }
 
         return savedQuiz;
     }
 
+    @Override
+    public Optional<Quiz> updateQuizByQuizName(String quizName, String newQuizName,
+                                               Integer newTimeLimit, Boolean newIsCompleted) {
+        quizRepository.updateQuizByQuizName(quizName, newQuizName, newTimeLimit, newIsCompleted);
 
+
+        return quizRepository.findByQuizName(newQuizName);
+    }
 
 
 }

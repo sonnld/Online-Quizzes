@@ -1,5 +1,9 @@
 package com.swp.online_quizz.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,10 +18,13 @@ import java.util.List;
 public class Question {
     @Id
     @Column(name = "QuestionID", nullable = false)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer questionId;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "QuizID")
+    @JsonBackReference
     private Quiz quizID;
 
     @Lob
@@ -33,30 +40,27 @@ public class Question {
     @Column(name = "VideoURL")
     private String videoURL;
 
-    @ManyToOne
-    @JoinColumn(name = "AnotherQuizID")
-    private Quiz quiz;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @OneToMany(mappedBy = "question")
+    @JsonManagedReference
     private List<Answer> answers = new ArrayList<>();
 
-    public Question(Quiz quizID, String questionContent, String questionType, List<Answer> answers) {
-        this.quizID = quizID;
+
+
+    public Question( String questionContent, String questionType, String imageURL, String videoURL) {
+
         this.questionContent = questionContent;
         this.questionType = questionType;
-        this.answers = answers;
-        initializeAnswers();
+        this.imageURL = imageURL;
+        this.videoURL = videoURL;
     }
 
     public Question() {
 
     }
 
-    private void initializeAnswers() {
-        if (this.answers != null) {
-            for (Answer answer : this.answers) {
-                answer.setQuestion(this);
-            }
-        }
-    }
+
+
+
 }

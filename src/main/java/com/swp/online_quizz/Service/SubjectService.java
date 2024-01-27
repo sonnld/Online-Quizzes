@@ -4,8 +4,10 @@ import com.swp.online_quizz.Entity.Subject;
 import com.swp.online_quizz.Repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SubjectService implements ISubjectService{
@@ -26,14 +28,24 @@ public class SubjectService implements ISubjectService{
         return subjectRepository.save(subject);
     }
     @Override
-    public Subject createOrUpdateSubject(Subject subject) {
-        String subjectName = subject.getSubjectName();
+    public Subject createOrUpdateSubject(String subjectName) {
+
         Subject existingSubject = getSubjectByName(subjectName);
 
         if (existingSubject != null) {
             return existingSubject;
         } else {
+            Subject subject = new Subject(subjectName,"");
             return createSubject(subject);
         }
+    }
+
+    @Override
+    @Transactional
+    public Optional<Subject> updateSubjectBySubjectName(String subjectName, String newSubjectName, String newDescription) {
+        subjectRepository.updateSubjectBySubjectName(subjectName, newSubjectName, newDescription);
+
+
+        return subjectRepository.findBySubjectName(newSubjectName);
     }
 }

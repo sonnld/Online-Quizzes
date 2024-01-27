@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/subject")
@@ -26,21 +27,37 @@ public class SubjectController {
     public List<Subject> getAll(){
         return iSubjectService.getALl();
     }
-    @PostMapping("/create")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Subject createSubject(@RequestBody Subject subject) {
+    @GetMapping("/create/{subjectName}")
+
+    public Subject createSubject(@PathVariable String subjectName) {
         try {
-            return subjectService.createOrUpdateSubject(subject);
+            return subjectService.createOrUpdateSubject(subjectName);
         } catch (Exception e) {
 
             throw new RuntimeException( e);
         }
     }
+    @PutMapping("/update/{subjectName}/{newSubjectName}/{newDescription}")
+    public ResponseEntity<Subject> updateSubjectByName(
+            @PathVariable String subjectName,
+            @PathVariable String newSubjectName,
+            @PathVariable String newDescription
+            ) {
 
-    @PostMapping("/cre")
-        public Subject creSubject(@RequestBody Subject subject){
-            return subjectService.createSubject(subject);
+        Optional<Subject> updatedSubject = subjectService.updateSubjectBySubjectName(subjectName,
+                                                                                        newSubjectName, newDescription);
 
+        if (updatedSubject.isPresent()) {
+            return new ResponseEntity<>(updatedSubject.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
+
+//    @PostMapping("/cre")
+//        public Subject creSubject(@RequestBody Subject subject){
+//            return subjectService.createSubject(subject);
+//
+//    }
 
 }
