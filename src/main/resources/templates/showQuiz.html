@@ -1,10 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" media="all"
+          href="/Css/showQuiz.css" th:href="@{/Css/showQuiz.css}">
 </head>
 <body>
-<h1>List Quiz</h1>
+<h1>Quiz List</h1>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Teacher</th>
+        <th>Subject</th>
+        <th>Name</th>
+        <th>Time Limit</th>
+        <th>Completed</th>
+        <th>Update</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="quiz : ${quizList}">
+        <td th:text="${quiz.quizId}"></td>
+        <td th:text="${quiz.teacher.username}"></td>
+        <td th:text="${quiz.subject.subjectName}"></td>
+        <td th:text="${quiz.quizName}"></td>
+        <td th:text="${quiz.timeLimit}"></td>
+        <td th:text="${quiz.isCompleted}"></td>
+        <td><a th:href="@{'/quiz/showUpdateQuizPage/' + quiz.quizId}">Update</a></td>
+        <td> <form action="@{'/quiz/delete/' + ${quiz.quizId}}" method="post">
+            <input type="hidden" name="_method" value="post">
+            <button type="submit">Delete</button>
+        </form></td>
+    </tr>
+    </tbody>
+</table>
+
+<a th:href="@{'/quiz/showCreateQuizPage'}">Add Quiz</a>
+
 </body>
 </html>

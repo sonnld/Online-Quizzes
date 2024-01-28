@@ -30,16 +30,17 @@ public class AnswerSevice implements IAnswerService {
     }
     @Override
     @Transactional
-    public Answer updateAnswer(Integer answerId, Answer updatedAnswer) {
 
+    public void updateAnswer(Integer answerId, String newAnswerContent, Boolean newIsCorrect) {
+        // Check if the answer exists
         Answer existingAnswer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new EntityNotFoundException("Answer not found with id: " + answerId));
 
+        // Update the attributes
+        existingAnswer.setAnswerContent(newAnswerContent);
+        existingAnswer.setIsCorrect(newIsCorrect);
 
-        existingAnswer.setAnswerContent(updatedAnswer.getAnswerContent());
-        existingAnswer.setIsCorrect(updatedAnswer.getIsCorrect());
-
-
-        return answerRepository.save(existingAnswer);
+        // Save the updated answer
+        answerRepository.save(existingAnswer);
     }
 }

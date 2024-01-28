@@ -17,9 +17,10 @@ public interface IQuestionService {
 
     public Question getQuestionById(Integer questionId);
 
-
+    @Transactional
+    Question updateQuestion(Integer questionId, String newQuestionContent, String newQuestionType, String newImageURL, String newVideoURL);
 
 
     @Transactional
-    Question updateQuestion(Integer questionId, Question updatedQuestion);
+    void deleteQuestionAndAnswers(Integer questionId);
 }

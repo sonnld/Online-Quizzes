@@ -14,10 +14,15 @@ public interface QuizRepository extends JpaRepository<Quiz, Integer> {
     @Modifying
     @Transactional
     @Query("UPDATE Quiz q SET q.quizName = :newQuizName, q.timeLimit = :newTimeLimit," +
-            " q.isCompleted = :newIsCompleted WHERE q.quizName = :quizName")
-    void updateQuizByQuizName(@Param("quizName") String quizName,
+            " q.isCompleted = :newIsCompleted WHERE q.quizId = :quizId")
+    void updateQuizByQuizId(@Param("quizId") Integer quizId,
                               @Param("newQuizName") String newQuizName,
                               @Param("newTimeLimit") Integer newTimeLimit,
                               @Param("newIsCompleted") Boolean newIsCompleted);
-    Optional<Quiz> findByQuizName(String quizName);
+    Optional<Quiz> findByQuizId(Integer quizID);
+
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM Quiz q WHERE q.quizId = :quizId")
+    void deleteQuizById(@Param("quizId") Integer quizId);
 }

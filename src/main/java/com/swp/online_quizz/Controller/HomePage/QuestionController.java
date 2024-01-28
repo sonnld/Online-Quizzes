@@ -38,14 +38,47 @@ public class QuestionController {
             return new ResponseEntity<>("Failed to create question. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PutMapping("/update/{questionId}")
-    public ResponseEntity<Question> updateQuestion(@PathVariable Integer questionId,
-                                                   @RequestBody Question updatedQuestion) {
+ //   @PutMapping("/update/{questionId}")
+//    public ResponseEntity<Question> updateQuestion(@PathVariable Integer questionId,
+//                                                   @RequestBody Question updatedQuestion) {
+//        try {
+//            Question updated = iQuestionService.updateQuestion(questionId, updatedQuestion);
+//            return new ResponseEntity<>(updated, HttpStatus.OK);
+//        } catch (EntityNotFoundException e) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//    }
+    @PutMapping("/update/{questionId}/{newQuestionContent}/{newQuestionType}/{newImageURL}/{newVideoURL}")
+    public ResponseEntity<String> updateQuestion(
+            @PathVariable Integer questionId,
+            @PathVariable String newQuestionContent,
+            @PathVariable String newQuestionType,
+            @PathVariable(required = false) String newImageURL,
+            @PathVariable(required = false) String newVideoURL
+    ) {
         try {
-            Question updated = iQuestionService.updateQuestion(questionId, updatedQuestion);
-            return new ResponseEntity<>(updated, HttpStatus.OK);
+            // Call the service method to update the question
+            Question updatedQuestion = iQuestionService.updateQuestion(questionId, newQuestionContent, newQuestionType, newImageURL, newVideoURL);
+
+            return new ResponseEntity<>("Question updated successfully", HttpStatus.OK);
         } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Question not found with id: " + questionId, HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to update question. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/delete/{questionId}")
+    public ResponseEntity<String> deleteQuestionAndAnswers(@PathVariable Integer questionId) {
+        String message;
+        try {
+            iQuestionService.deleteQuestionAndAnswers(questionId);
+            message = "Question and answers deleted successfully!";
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        } catch (Exception e) {
+            message = "Error deleting question and answers: " + e.getMessage();
+            return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

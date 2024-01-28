@@ -41,15 +41,21 @@ public class AnswersController {
         }
     }
 
-    @PutMapping("/update/{answerId}")
-    public ResponseEntity<Answer> updateAnswer(
+    @PutMapping("/update/{answerId}/{newAnswerContent}/{newIsCorrect}")
+    public ResponseEntity<String> updateAnswer(
             @PathVariable Integer answerId,
-            @RequestBody Answer updatedAnswer) {
+            @PathVariable String newAnswerContent,
+            @PathVariable Boolean newIsCorrect
+    ) {
         try {
-            Answer updated = iAnswerService.updateAnswer(answerId, updatedAnswer);
-            return ResponseEntity.ok(updated);
+            // Call the service method to update the answer
+            iAnswerService.updateAnswer(answerId, newAnswerContent, newIsCorrect);
+
+            return new ResponseEntity<>("Answer updated successfully", HttpStatus.OK);
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
+            return new ResponseEntity<>("Answer not found with id: " + answerId, HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to update answer. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

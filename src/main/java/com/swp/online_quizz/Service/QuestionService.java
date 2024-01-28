@@ -2,6 +2,7 @@ package com.swp.online_quizz.Service;
 
 import com.swp.online_quizz.Entity.Question;
 import com.swp.online_quizz.Entity.Quiz;
+import com.swp.online_quizz.Repository.AnswerRepository;
 import com.swp.online_quizz.Repository.QuestionRepositoty;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class QuestionService implements IQuestionService {
@@ -19,7 +19,8 @@ public class QuestionService implements IQuestionService {
     @Autowired
     @Lazy
     private QuizService quizService;
-
+    @Autowired
+    public AnswerRepository answerRepository;
     @Override
     public List<Question> getALl() {
         return questionRepositoty.findAll();
@@ -37,20 +38,28 @@ public class QuestionService implements IQuestionService {
     }
     @Override
     @Transactional
+    public Question updateQuestion(Integer questionId, String newQuestionContent, String newQuestionType, String newImageURL, String newVideoURL) {
+        // Check if the question exists
+        Question existingQuestion = questionRepositoty.findById(questionId)
+                .orElseThrow(() -> new EntityNotFoundException("Question not found with id: " + questionId));
 
-    public Question updateQuestion(Integer questionId, Question updatedQuestion) {
-        Optional<Question> existingQuestion = questionRepositoty.findById(questionId);
+        // Update the attributes
+        existingQuestion.setQuestionContent(newQuestionContent);
+        existingQuestion.setQuestionType(newQuestionType);
+        existingQuestion.setImageURL(newImageURL);
+        existingQuestion.setVideoURL(newVideoURL);
 
-        if (existingQuestion.isPresent()) {
-            Question questionToUpdate = existingQuestion.get();
-            questionToUpdate.setQuestionContent(updatedQuestion.getQuestionContent());
-            questionToUpdate.setQuestionType(updatedQuestion.getQuestionType());
-            questionToUpdate.setImageURL(updatedQuestion.getImageURL());
-            questionToUpdate.setVideoURL(updatedQuestion.getVideoURL());
+        // Save the updated question
+        return questionRepositoty.save(existingQuestion);
+    }
 
-            return questionRepositoty.save(questionToUpdate);
-        } else {
-            throw new EntityNotFoundException("Question not found with id: " + questionId);
-        }
+    @Override
+    @Transactional
+    public void deleteQuestionAndAnswers(Integer questionId) {
+        // First, delete associated answers
+        answerRepository.deleteByQuestion_QuestionId(questionId);
+
+        // Then, delete the question
+        questionRepositoty.deleteQuestionById(questionId);
     }
 }
