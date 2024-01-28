@@ -1,97 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script
-      src="https://kit.fontawesome.com/64d58efce2.js"
-      crossorigin="anonymous"
-    ></script>
-    <link rel="stylesheet" href="/Css/Login.css" />
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/Css/Login.css">
     <title>Log in</title>
-  </head>
-  <body>
-    <div class="container">
-      <div class="forms-container">
-        <div class="login-signup">
-          <form action="#" class="log-in-form">
-            <h2 class="title">Log in</h2>
-            <div class="input-field">
-              <i class="fas fa-user"></i>
-              <input type="text" placeholder="Username" />
-            </div>
-            <div class="input-field">
-              <i class="fas fa-lock"></i>
-              <input type="password" placeholder="Password" />
-            </div>
-            <input type="submit" value="Login" class="btn solid" />
-            <p class="social-text">Or Log in with</p>
-            <div class="social-media">
-              <a href="#" class="social-icon">
-                <i class="fab fa-google"></i>
-              </a>
-            </div>
-          </form>
-          <form action="#" class="sign-up-form">
-            <h2 class="title">Sign up</h2>
-            <div class="input-field">
-              <i class="fas fa-user"></i>
-              <input type="text" placeholder="Username" />
-            </div>
-            <div class="input-field">
-              <i class="fas fa-envelope"></i>
-              <input type="email" placeholder="Email" />
-            </div>
-            <div class="input-field">
-              <i class="fas fa-lock"></i>
-              <input type="password" placeholder="Password" />
-            </div>
-            <div class="input-field-radio">
-              <input type="radio" id="studentRadio" checked name="userType" />
-              <label for="studentRadio">Student</label>
 
-              <input type="radio" id="teacherRadio" name="userType" />
-              <label for="teacherRadio">Teacher</label>
-          </div>
-            <input type="submit" class="btn" value="Sign up" />
-            <p class="social-text">Or Sign up with</p>
-            <div class="social-media">
-              <a href="#" class="social-icon">
-                <i class="fab fa-google"></i>
-              </a>
-            </div>
-          </form>
-        </div>
-      </div>
+</head>
 
-      <div class="panels-container">
-        <div class="panel left-panel">
-          <div class="content">
-            <h3>New here ?</h3>
-            <p>
-              If you did not register yet, click the bottom button to sign up
-            </p>
-            <button class="btn transparent" id="sign-up-btn">
-              Sign up
-            </button>
-          </div>
-          <img src="/images/log.svg" class="image" alt="" />
+<body>
+    <div class="login-card">
+        <div class="column">
+            <h1>Login</h1>
+            <form action="">
+                <div class="form-item">
+                    <input type="text" class="form-element" placeholder="Username or email">
+                </div>
+                <div class="form-item">
+                    <input type="password" class="form-element" placeholder="password">
+                </div>
+                <div class="form-checkbox-item">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe">Remember me</label>
+                </div>
+                <div class="flex">
+                    <button type="button">Sign in</button>
+                    <a href="ForgotPassword.html">Reset your password</a>
+                </div>
+                <div class="footer">
+                    <p style="margin-top: 3rem;margin-bottom: 1.5rem;">Other sign-in method</p>
+                    <div class="social-button">
+                        <a href="" class="google">
+                            <i class="fab fa-google"></i>
+                        </a>
+                    </div>
+                </div>
+            </form>
         </div>
-        <div class="panel right-panel">
-          <div class="content">
-            <h3>One of us ?</h3>
-            <p>
-              If you have already had an account before, click the bottom button to log in
-            </p>
-            <button class="btn transparent" id="log-in-btn">
-              Log in
-            </button>
-          </div>
-          <img src="/images/register.svg" class="image" alt="" />
+        <div class="column">
+            <h2>Welcome to Online Quizz</h2>
+            <p>If you don't have any account, would you like to register right now?</p>
+            <a href="Register.html">Sign up</a>
         </div>
-      </div>
     </div>
+</body>
 
-    <script src="/Js/Login.js"></script>
-  </body>
 </html>
