@@ -23,13 +23,13 @@ public class QuestionController {
     public List<Question> getAll(){
         return iQuestionService.getALl();
     }
-    @PostMapping("/create/{quizId}/{questionContent}/{questionType}/{imageURL}/{videoURL}")
-    public ResponseEntity<String> createQuestion(
-            @PathVariable Integer quizId,
-            @PathVariable String questionContent,
-            @PathVariable String questionType,
-            @PathVariable(required = false) String imageURL,
-            @PathVariable(required = false) String videoURL) {
+    @PostMapping("/create")
+    public ResponseEntity<String> createQuestion(@ModelAttribute Question question,
+            @RequestParam(name="quizId") Integer quizId,
+            @RequestParam(name="questionContent") String questionContent,
+            @RequestParam(name="questionType") String questionType,
+            @RequestParam(name="imageURL", required = false) String imageURL,
+            @RequestParam(name="videoURL",required = false) String videoURL) {
 
         try {
             Question createdQuestion = iQuestionService.createQuestion(quizId, questionContent, questionType, imageURL, videoURL);

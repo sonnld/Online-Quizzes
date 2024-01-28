@@ -24,15 +24,16 @@ public class AnswersController {
         return iAnswerService.getALl();
     }
 
-    @PostMapping("/create/{answerContent}/{questionId}/{isCorrect}")
-    public ResponseEntity<Answer> createAnswer(@PathVariable String answerContent,
-                                               @PathVariable Integer questionId,
-                                               @PathVariable boolean isCorrect
-                                               ) {
+    @PostMapping("/create/")
+    public ResponseEntity<Answer> createAnswer(@ModelAttribute Answer answer,
+            @RequestParam(name="answerContent") String answerContent,
+            @RequestParam(name="questionId") Integer questionId,
+            @RequestParam(name="isCorrect") boolean isCorrect
+    ) {
         try {
             Question existingQuestion = iQuestionService.getQuestionById(questionId);
-            Answer answer = new Answer(answerContent,true);
-            answer.setQuestion(existingQuestion);
+            Answer answers = new Answer(answerContent,true);
+            answers.setQuestion(existingQuestion);
             Answer createdAnswer = iAnswerService.createAnswer(answerContent,questionId,true);
             return new ResponseEntity<>(createdAnswer, HttpStatus.CREATED);
         } catch (Exception e) {
