@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 public interface QuestionRepositoty extends JpaRepository<Question, Integer> {
     @Transactional
     @Modifying
@@ -20,6 +22,6 @@ public interface QuestionRepositoty extends JpaRepository<Question, Integer> {
     );
 
     @Modifying
-    @Query("DELETE FROM Question q WHERE q.questionId = :questionId")
-    void deleteQuestionById(@Param("questionId") Integer questionId);
+    @Query("DELETE FROM Question q WHERE q.quizID = :quizID")
+    void deleteQuestionById(@Param("quizID") Integer quizID);
 }

@@ -4,6 +4,7 @@ import com.swp.online_quizz.Entity.Question;
 import com.swp.online_quizz.Entity.Quiz;
 import com.swp.online_quizz.Repository.AnswerRepository;
 import com.swp.online_quizz.Repository.QuestionRepositoty;
+import com.swp.online_quizz.Repository.QuizRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -21,6 +22,8 @@ public class QuestionService implements IQuestionService {
     private QuizService quizService;
     @Autowired
     public AnswerRepository answerRepository;
+    @Autowired
+    public QuizRepository quizRepository;
     @Override
     public List<Question> getALl() {
         return questionRepositoty.findAll();
@@ -52,14 +55,22 @@ public class QuestionService implements IQuestionService {
         // Save the updated question
         return questionRepositoty.save(existingQuestion);
     }
+    @Override
+    public List<Question> getQuestionsByQuizId(Integer quizId) {
+        // Kiểm tra xem quiz có tồn tại không
+        Quiz existingQuiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new EntityNotFoundException("Quiz not found with id: " + quizId));
 
+        // Lấy danh sách các question trong quiz
+        return existingQuiz.getQuestions();
+    }
     @Override
     @Transactional
-    public void deleteQuestionAndAnswers(Integer questionId) {
+    public void deleteQuestionAndAnswers(Integer quizId) {
         // First, delete associated answers
-        answerRepository.deleteByQuestion_QuestionId(questionId);
+        answerRepository.deleteByQuestion_QuestionId(quizId);
 
         // Then, delete the question
-        questionRepositoty.deleteQuestionById(questionId);
+        questionRepositoty.deleteQuestionById(quizId);
     }
 }

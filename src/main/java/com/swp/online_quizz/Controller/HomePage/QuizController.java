@@ -1,9 +1,11 @@
 package com.swp.online_quizz.Controller.HomePage;
 
+import com.swp.online_quizz.Entity.Answer;
 import com.swp.online_quizz.Entity.Question;
 import com.swp.online_quizz.Entity.Quiz;
 
 import com.swp.online_quizz.Entity.Subject;
+import com.swp.online_quizz.Repository.QuizRepository;
 import com.swp.online_quizz.Service.IAnswerService;
 import com.swp.online_quizz.Service.IQuestionService;
 import com.swp.online_quizz.Service.IQuizService;
@@ -31,7 +33,8 @@ public class QuizController
     public QuizController(IQuizService iQuizService) {
         this.iQuizService = iQuizService;
     }
-
+    @Autowired
+    private QuizRepository quizRepository;
     @Autowired
     private QuizService quizService;
     @Autowired
@@ -116,50 +119,81 @@ public class QuizController
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/updateAll/{quizId}")
-    public ResponseEntity<String> updateQuizQuestionAnswer(
-            @ModelAttribute("user") Quiz quiz,
-            @PathVariable Integer quizId,
-            @RequestParam(name = "quizName") String quizName,
-            @RequestParam(name = "timeLimit") Integer timeLimit,
-            @RequestParam(name = "subjectName") String subjectName,
-            @RequestParam(name = "isCompleted") boolean isCompleted,
-            @RequestParam(name = "questions[0].questionId") Integer questionId,
-            @RequestParam(name = "questions[${questionIndex.index}].questionContent") String questionContent,
-            @RequestParam(name = "questions[${questionIndex.index}].questionType") String questionType,
-            @RequestParam(name = "imageURL", required = false) String imageURL,
-            @RequestParam(name = "videoURL", required = false) String videoURL,
-            @RequestParam(name = "questions[0].answers[0].answerId") Integer answerId,
-            @RequestParam(name = "questions[${questionIndex.index}].answers[${answerIndex.index}].answerContent") String answerContent,
-            @RequestParam(name = "questions[${questionIndex.index}].answers[${answerIndex.index}].correct") boolean isCorrect
-    ) {
-        try {
-            // Update Quiz
-            Optional<Quiz> updatedQuizOpt = quizService.updateQuizByQuizId(quizId, quizName, timeLimit, isCompleted);
+//    @PutMapping("/updateAll/{quizId}")
+//    public ResponseEntity<String> updateQuizQuestionAnswer(
+//            @ModelAttribute("user") Quiz quiz,
+//            @PathVariable Integer quizId,
+//            @RequestParam(name = "quizName") String quizName,
+//            @RequestParam(name = "timeLimit") Integer timeLimit,
+//            @RequestParam(name = "subjectName") String subjectName,
+//            @RequestParam(name = "isCompleted") boolean isCompleted,
+//            @RequestParam(name = "questions[0].questionId") Integer questionId,
+//            @RequestParam(name = "questions[${questionIndex.index}].questionContent") String questionContent,
+//            @RequestParam(name = "questions[${questionIndex.index}].questionType") String questionType,
+//            @RequestParam(name = "imageURL", required = false) String imageURL,
+//            @RequestParam(name = "videoURL", required = false) String videoURL,
+//            @RequestParam(name = "questions[0].answers[0].answerId") Integer answerId,
+//            @RequestParam(name = "questions[${questionIndex.index}].answers[${answerIndex.index}].answerContent") String answerContent,
+//            @RequestParam(name = "questions[${questionIndex.index}].answers[${answerIndex.index}].correct") boolean isCorrect
+//    ) {
+//        try {
+//            // Update Quiz
+//            Optional<Quiz> updatedQuizOpt = quizService.updateQuizByQuizId(quizId, quizName, timeLimit, isCompleted);
+//
+//            if (updatedQuizOpt.isPresent()) {
+//                // Update Question
+//                iQuestionService.updateQuestion(questionId, questionContent, questionType, imageURL, videoURL);
+//
+//                // Update Answer
+//                iAnswerService.updateAnswer(answerId, answerContent, isCorrect);
+//
+//                return new ResponseEntity<>("Quiz, Question, and Answer updated successfully", HttpStatus.OK);
+//            } else {
+//                return new ResponseEntity<>("Quiz not found", HttpStatus.NOT_FOUND);
+//            }
+//        } catch (EntityNotFoundException e) {
+//            return new ResponseEntity<>("Failed to update Quiz, Question, and Answer. " + e.getMessage(), HttpStatus.NOT_FOUND);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>("Failed to update Quiz, Question, and Answer. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+@PostMapping("/updateAll/{quizId}")
+public ResponseEntity<String> updateQuizAll(//@ModelAttribute("user") Quiz quiz,
+                                         @PathVariable Integer quizId,
+                                         @RequestParam(name="quizName") String newQuizName,
+                                         @RequestParam(name="timeLimit") Integer newTimeLimit,
+                                         @RequestParam(name="newIsCompleted") Boolean newIsCompleted,
+                                         @RequestParam(name="questionId") List<Integer> questionId,
+                                         @RequestParam(name="newQuestionContent") List<String> newQuestionContent,
+                                         @RequestParam(name="newQuestionType") List<String> newQuestionType,
+                                         @RequestParam(name="newImageURL", required = false) List<String> newImageURL,
+                                         @RequestParam(name="newVideoURL", required = false) List<String> newVideoURL,
+                                         @RequestParam(name="answerId") List<List<Integer>> answerId,
+                                         @RequestParam(name="newAnswerContent") List<List<String>> newAnswerContent,
+                                         @RequestParam(name="newIsCorrect") List<List<Boolean>> newIsCorrect) {
+    try {
+         quizService.updateAll(quizId, newQuizName, newTimeLimit, newIsCompleted,
+                questionId, newQuestionContent, newQuestionType, newImageURL, newVideoURL,
+                answerId, newAnswerContent, newIsCorrect);
 
-            if (updatedQuizOpt.isPresent()) {
-                // Update Question
-                iQuestionService.updateQuestion(questionId, questionContent, questionType, imageURL, videoURL);
-
-                // Update Answer
-                iAnswerService.updateAnswer(answerId, answerContent, isCorrect);
-
-                return new ResponseEntity<>("Quiz, Question, and Answer updated successfully", HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>("Quiz not found", HttpStatus.NOT_FOUND);
-            }
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>("Failed to update Quiz, Question, and Answer. " + e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Failed to update Quiz, Question, and Answer. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>("Quiz updated successfully", HttpStatus.OK);
+    } catch (EntityNotFoundException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    } catch (Exception e) {
+        return new ResponseEntity<>("An error occurred while updating the quiz", HttpStatus.INTERNAL_SERVER_ERROR);
     }
+}
     @GetMapping("/showUpdateQuizPage/{quizId}")
-    public String showUpdatePage(@PathVariable Integer quizId, Model model) {
+    public String getUpdateQuizForm(@PathVariable Integer quizId, Model model) {
+        // Retrieve the quiz and its details from the service
+        Quiz quiz = quizService.getQuizById(quizId);
+        if (quiz == null) {
+            return "showQuiz";
+        }
+        model.addAttribute("quiz", quiz);
         return "updateQuiz";
     }
-    @PostMapping("/delete/{quizId}")
-
+    @DeleteMapping("/delete/{quizId}")
     public ResponseEntity<String> deleteQuizzes(@PathVariable Integer quizId) {
         String message;
         try {

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface QuizRepository extends JpaRepository<Quiz, Integer> {
@@ -20,9 +21,9 @@ public interface QuizRepository extends JpaRepository<Quiz, Integer> {
                               @Param("newTimeLimit") Integer newTimeLimit,
                               @Param("newIsCompleted") Boolean newIsCompleted);
     Optional<Quiz> findByQuizId(Integer quizID);
-
-    @Transactional
-    @Modifying
-    @Query("DELETE FROM Quiz q WHERE q.quizId = :quizId")
-    void deleteQuizById(@Param("quizId") Integer quizId);
+    Optional<Quiz> deleteQuizByQuizId(Integer quizId);
+//    @Transactional
+//    @Modifying
+//    @Query("DELETE FROM Quiz q WHERE q.quizId = :quizId")
+//    void deleteQuizById(@Param("quizId") Integer quizId);
 }

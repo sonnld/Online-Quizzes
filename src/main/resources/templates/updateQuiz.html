@@ -12,55 +12,57 @@
 <body>
 <h1>Update Quiz</h1>
 
-<form id="quizForm" action="/quiz/updateAll/{quizId}" th:action="@{'/quiz/updateAll/{quizId}' + ${quiz.quizId}}" th:object="${quiz}" method="post">
-    <input type="hidden" th:value="${quizId}">
-
+<form id="quizForm" action="/quiz/updateAll/${quiz.quizId}" th:action="@{'/quiz/updateAll/' + ${quiz.quizId}}" th:object="${quiz}" method="post">
     <label for="quizName">Quiz Name:</label>
-    <input type="text" id="quizName" name="quizName" th:value="${quiz.quizName}" required>
+    <input type="text" id="quizName" name="quizName" th:value="${quiz.getQuizName()}" required>
 
     <label for="timeLimit">Time Limit:</label>
-    <input type="number" id="timeLimit" name="timeLimit" th:value="${quiz.timeLimit}" required>
+    <input type="number" id="timeLimit" name="timeLimit" th:value="${quiz.getTimeLimit()}" required>
 
-    <label for="subjectName">Subject Name:</label>
-    <input type="text" id="subjectName" name="subjectName" th:value="${quiz.subjectName}" required>
+<!--    <label for="subjectName">Subject Name:</label>-->
+<!--    <input type="text" id="subjectName" name="subjectName" th:value="${quiz.subject.getSubjectName()}" required>-->
 
-    <label for="teacherId">Teacher ID:</label>
-    <input type="number" id="teacherId" name="teacherId" th:value="${quiz.teacherId}" required>
+    <label for="newIsCompleted">Is Completed:</label>
+    <input type="checkbox" id="newIsCompleted" name="newIsCompleted" th:checked="${quiz.getIsCompleted()}">
 
     <hr>
 
     <h2>Questions</h2>
 
     <div id="questionsContainer">
-        <!-- Loop through existing questions -->
-        <th:block th:each="question, questionIndex : ${quiz.question}">
-            <div class="question">
-                <label for="questionContent"><h4>Question Content:</h4></label>
-                <input type="text" id="questionContent" class="questionContent" name="questions[__${questionIndex.index}__].questionContent" th:value="${question.questionContent}" required>
+        <div class="question">
+            <div th:each="question, questionIndex : ${quiz.questions}" class="question">
+                <label for="newQuestionContent">New Question Content:</label>
+                <input type="hidden" th:id="'questionId_' + ${questionIndex.index}" name="questionId" th:value="${question.getQuestionId()}">
+                <input type="text" id="newQuestionContent" class="questionContent" name="newQuestionContent" th:value="${question.getQuestionContent()}" required>
 
-                <label for="questionType">Question Type:</label>
-                <input type="text" id="questionType" class="questionType" name="questions[__${questionIndex.index}__].questionType" th:value="${question.questionType}" required>
+                <label for="newQuestionType">New Question Type:</label>
+                <input type="text" id="newQuestionType" class="questionType" name="newQuestionType" th:value="${question.getQuestionType()}" required>
 
-                <hr>
+                <label for="newImageURL">New Image URL:</label>
+                <input type="text" id="newImageURL" name="newImageURL" th:value="${question.getImageURL()}">
 
-                <h4>Answers</h4>
+                <label for="newVideoURL">New Video URL:</label>
+                <input type="text" id="newVideoURL" name="newVideoURL" th:value="${question.getVideoURL()}">
+            <hr>
 
-                <div class="answersContainer">
+            <h4>Answers</h4>
 
-                    <th:block th:each="answer, answerIndex : ${question.answer}">
-                        <div class="answer">
-                            <label for="answerContent">Answer Content:</label>
-                            <input type="text" id="answerContent" class="answerContent" name="questions[__${questionIndex.index}__].answers[__${answerIndex.index}__].answerContent" th:value="${answer.answerContent}" required>
+            <div class="answersContainer">
+                <div th:each="answer, answerIndex : ${question.answers}" class="answer">
+                    <label for="newAnswerContent">New Answer Content:</label>
+                    <input type="hidden" th:id="'answerId_' + ${answerIndex.index}" name="answerId" th:value="${answer.getAnswerId()}">
+                    <input type="text" id="newAnswerContent" class="answerContent" name="newAnswerContent" th:value="${answer.getAnswerContent()}" required>
 
-                            <label for="isCorrect">Is Correct:</label>
-                            <input type="checkbox" id="isCorrect" class="isCorrect" name="questions[__${questionIndex.index}__].answers[__${answerIndex.index}__].correct" th:checked="${answer.isCorrect}">
-                        </div>
-                    </th:block>
+                    <label for="newIsCorrect">Is Correct:</label>
+                    <input type="checkbox" id="newIsCorrect" class="isCorrect" name="newIsCorrect" th:checked="${answer.getIsCorrect()}">
                 </div>
 
-                <button type="button" onclick="addAnswer(this)">Add Answer</button>
             </div>
-        </th:block>
+
+            <button type="button" onclick="addAnswer(this)">Add Answer</button>
+        </div>
+
     </div>
 
     <button type="button" onclick="addQuestion()">Add Question</button>

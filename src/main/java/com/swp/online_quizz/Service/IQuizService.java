@@ -1,5 +1,7 @@
 package com.swp.online_quizz.Service;
 
+import com.swp.online_quizz.Entity.Answer;
+import com.swp.online_quizz.Entity.Question;
 import com.swp.online_quizz.Entity.Quiz;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +16,16 @@ public interface IQuizService {
 
     Optional<Quiz> updateQuizByQuizId(Integer quizId, String newQuizName,
                                       Integer newTimeLimit, Boolean newIsCompleted);
+
+    @Transactional
+    Quiz updateAll(Integer quizId, String newQuizName, Integer newTimeLimit, Boolean newIsCompleted,
+                   List<Integer> questionIds, List<String> newQuestionContents, List<String> newQuestionTypes,
+                   List<String> newImageURLs, List<String> newVideoURLs,
+                   List<List<Integer>> answerIds, List<List<String>> newAnswerContents, List<List<Boolean>> newIsCorrects);
+
+    Question findQuestionById(List<Question> questions, Integer quesId);
+
+    Answer findAnswerByAnswerId(List<Answer> answers, Integer ansId);
 
     @Transactional
     void deleteQuizById(Integer quizId);
