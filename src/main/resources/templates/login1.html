@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/static/Css/Login.css">
+    <title>Title</title>
+</head>
+<body>
+<div class="login-card">
+    <div class="column">
+        <h1>Login</h1>
+        <form action="/login" method="POST">
+            <div class="form-item">
+                <input type="text" class="form-element" placeholder="Username">
+            </div>
+            <div class="form-item">
+                <input type="password" class="form-element" placeholder="password">
+            </div>
+            <div class="form-checkbox-item">
+                <input type="checkbox" value="ON" id="rememberMe">
+                <label for="rememberMe">Remember me</label>
+            </div>
+            <div class="flex">
+                <button type="button">Sign in</button>
+                <a href="/templates/ForgotPassword.html">Reset your password</a>
+            </div>
+            <div class="footer">
+                <p style="margin-top: 3rem;margin-bottom: 1.5rem;">Other sign-in method</p>
+                <div class="social-button">
+                    <a href="" class="google">
+                        <i class="fab fa-google"></i>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="column">
+        <h2>Welcome to Online Quizz</h2>
+        <p>If you don't have any account, would you like to register right now?</p>
+        <a href="/templates/Register.html">Sign up</a>
+    </div>
+</div>
+</body>
+</html>
