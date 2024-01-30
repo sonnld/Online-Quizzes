@@ -203,9 +203,9 @@ public String processUpdateQuizForm(@PathVariable Integer quizId, @ModelAttribut
     // Update the quiz data, including nested questions and answers
     Boolean success = quizService.updateQuizWithQuestionsAndAnswers(quizId, updatedQuiz);
     if (success) {
-        return "redirect:/quizzes/list"; // Redirect to the quiz details page
+        return "redirect:/quizzes/list";
     } else {
-        // Handle the update failure, you may want to show an error message
+
         return "updateQuiz";
     }
 }
