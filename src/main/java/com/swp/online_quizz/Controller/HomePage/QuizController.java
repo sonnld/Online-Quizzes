@@ -76,7 +76,7 @@ public class QuizController
     }
     @PostMapping("/createAll")
     public RedirectView createQuizQuestionAnswer(
-            @ModelAttribute("user") Quiz quiz,
+            @ModelAttribute("quiz") Quiz quiz,
             @RequestParam(name = "quizName") String quizName,
             @RequestParam(name = "timeLimit") Integer timeLimit,
             @RequestParam(name = "subjectName") String subjectName,

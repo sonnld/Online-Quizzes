@@ -12,13 +12,13 @@ import java.util.Optional;
 @Service
 public class SubjectService implements ISubjectService{
 
-   @Autowired
-   private SubjectRepository subjectRepository;
+    @Autowired
+    private SubjectRepository subjectRepository;
     @Override
     public List<Subject> getALl() {
         return subjectRepository.findAll();
     }
-   @Override
+    @Override
     public Subject getSubjectByName(String subjectName) {
         return subjectRepository.findBySubjectName(subjectName)
                 .orElse(null);

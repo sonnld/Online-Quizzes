@@ -30,7 +30,7 @@
   <h2>Questions</h2>
 
   <div id="questionsContainer">
-<!--    <form id="questionForm" action="/question/create" th:action="@{/question/create}" th:object="${question}" method="post" >-->
+    <!--    <form id="questionForm" action="/question/create" th:action="@{/question/create}" th:object="${question}" method="post" >-->
     <div class="question">
       <label for="questionContent"><h4>Question Content:</h4></label>
       <input type="text" id="questionContent" class="questionContent" name="questions[0].questionContent"  required>
@@ -43,7 +43,7 @@
       <h4>Answers</h4>
 
       <div class="answersContainer">
-<!--        <form id="answerForm" action="/answer/create" th:action="@{/answer/create}" th:object="${answer}" method="post">-->
+        <!--        <form id="answerForm" action="/answer/create" th:action="@{/answer/create}" th:object="${answer}" method="post">-->
         <div class="answer">
           <label for="answerContent">Answer Content:</label>
           <input type="text" id="answerContent" class="answerContent" name="questions[0].answers[0].answerContent"  required>
@@ -51,12 +51,12 @@
           <label for="isCorrect">Is Correct:</label>
           <input type="checkbox" id="isCorrect" class="isCorrect" name="questions[0].answers[0].correct" >
         </div>
-<!--    </form>-->
+        <!--    </form>-->
       </div>
 
       <button type="button" onclick="addAnswer(this)">Add Answer</button>
     </div>
-<!--    </form>-->
+    <!--    </form>-->
   </div>
 
   <button type="button" onclick="addQuestion()">Add Question</button>
@@ -118,10 +118,10 @@
 
     questionsContainer.appendChild(newQuestionDiv);
   }
-    function submitForms() {
-      // Submit the main quiz form
-      document.getElementById('quizForm').submit();
-    }
+  function submitForms() {
+    // Submit the main quiz form
+    document.getElementById('quizForm').submit();
+  }
 
 </script>
 </body>
