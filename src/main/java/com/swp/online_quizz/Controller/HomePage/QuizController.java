@@ -173,29 +173,40 @@ public class QuizController
 //            return new ResponseEntity<>("Failed to update Quiz, Question, and Answer. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 //        }
 //    }
+//@PostMapping("/updateAll/{quizId}")
+//public ResponseEntity<String> updateQuizAll(@ModelAttribute("user") Quiz quiz,
+//                                         @PathVariable Integer quizId,
+//                                         @RequestParam(name="quizName") String newQuizName,
+//                                         @RequestParam(name="timeLimit") Integer newTimeLimit,
+//                                         @RequestParam(name="questionId") List<Integer> questionId,
+//                                         @RequestParam(name="newQuestionContent") List<String> newQuestionContent,
+//                                         @RequestParam(name="newQuestionType") List<String> newQuestionType,
+//                                         @RequestParam(name="newImageURL", required = false) List<String> newImageURL,
+//                                         @RequestParam(name="newVideoURL", required = false) List<String> newVideoURL,
+//                                         @RequestParam(name="answerId") List<List<Integer>> answerId,
+//                                         @RequestParam(name="newAnswerContent") List<List<String>> newAnswerContent) {
+//    try {
+//
+//        List<List<Boolean>> newIsCorrect = new ArrayList<>();
+//         quizService.updateAll(quizId, newQuizName, newTimeLimit, false,
+//                questionId, newQuestionContent, newQuestionType, newImageURL, newVideoURL,
+//                answerId, newAnswerContent, newIsCorrect);
+//        return new ResponseEntity<>("Quiz updated successfully", HttpStatus.OK);
+//    } catch (EntityNotFoundException e) {
+//        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+//    } catch (Exception e) {
+//        return new ResponseEntity<>("An error occurred while updating the quiz", HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
+//}
 @PostMapping("/updateAll/{quizId}")
-public ResponseEntity<String> updateQuizAll(@ModelAttribute("user") Quiz quiz,
-                                         @PathVariable Integer quizId,
-                                         @RequestParam(name="quizName") String newQuizName,
-                                         @RequestParam(name="timeLimit") Integer newTimeLimit,
-                                         @RequestParam(name="questionId") List<Integer> questionId,
-                                         @RequestParam(name="newQuestionContent") List<String> newQuestionContent,
-                                         @RequestParam(name="newQuestionType") List<String> newQuestionType,
-                                         @RequestParam(name="newImageURL", required = false) List<String> newImageURL,
-                                         @RequestParam(name="newVideoURL", required = false) List<String> newVideoURL,
-                                         @RequestParam(name="answerId") List<List<Integer>> answerId,
-                                         @RequestParam(name="newAnswerContent") List<List<String>> newAnswerContent) {
-    try {
-
-        List<List<Boolean>> newIsCorrect = new ArrayList<>();
-         quizService.updateAll(quizId, newQuizName, newTimeLimit, false,
-                questionId, newQuestionContent, newQuestionType, newImageURL, newVideoURL,
-                answerId, newAnswerContent, newIsCorrect);
-        return new ResponseEntity<>("Quiz updated successfully", HttpStatus.OK);
-    } catch (EntityNotFoundException e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-    } catch (Exception e) {
-        return new ResponseEntity<>("An error occurred while updating the quiz", HttpStatus.INTERNAL_SERVER_ERROR);
+public String processUpdateQuizForm(@PathVariable Integer quizId, @ModelAttribute Quiz updatedQuiz) {
+    // Update the quiz data, including nested questions and answers
+    Boolean success = quizService.updateQuizWithQuestionsAndAnswers(quizId, updatedQuiz);
+    if (success) {
+        return "redirect:/quizzes/list"; // Redirect to the quiz details page
+    } else {
+        // Handle the update failure, you may want to show an error message
+        return "updateQuiz";
     }
 }
     @GetMapping("/showUpdateQuizPage/{quizId}")

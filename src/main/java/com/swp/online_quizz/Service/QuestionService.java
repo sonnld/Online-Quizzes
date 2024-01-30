@@ -70,7 +70,7 @@ public class QuestionService implements IQuestionService {
         return questionRepositoty.save(existingQuestion);
     }
     @Override
-    public Boolean updateQuestion(Integer id, Question question) {
+    public Boolean updateQuestion1(Integer id, Question question) {
         try {
             Question uQuestion = questionRepositoty.getReferenceById(id);
             uQuestion.setQuestionContent(question.getQuestionContent());

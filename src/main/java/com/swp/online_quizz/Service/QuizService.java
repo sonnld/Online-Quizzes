@@ -69,7 +69,7 @@ public class QuizService implements IQuizService {
             quiz.setTeacher(teacher);
             quiz.setIsCompleted(false);
 
-            Quiz savedQuiz = quizRepository.save(quiz);
+            quizRepository.save(quiz);
 
             return true; // Nếu không có ngoại lệ, trả về true
         } catch (Exception e) {
@@ -99,56 +99,108 @@ public class QuizService implements IQuizService {
         }
         return false;
     }
-    @Transactional
+//    @Transactional
+//    @Override
+//    public Quiz updateAll(Integer quizId, String newQuizName, Integer newTimeLimit, Boolean newIsCompleted,
+//                          List<Integer> questionId, List<String> newQuestionContent, List<String> newQuestionType,
+//                          List<String> newImageURL, List<String> newVideoURL,
+//                          List<List<Integer>> answerId, List<List<String>> newAnswerContent, List<List<Boolean>> newIsCorrect) {
+//        // Kiểm tra xem quiz có tồn tại không
+//        Quiz quiz = quizRepository.findById(quizId)
+//                .orElseThrow(() -> new EntityNotFoundException("Quiz not found with id: " + quizId));
+//
+//        // Cập nhật thông tin của quiz
+//        quiz.setQuizName(newQuizName);
+//        quiz.setTimeLimit(newTimeLimit);
+//        quiz.setIsCompleted(newIsCompleted);
+//
+//        // Lấy danh sách các question trong quiz
+//        List<Question> existingQuestions = quiz.getQuestions();
+//
+//        // Cập nhật thông tin của các question
+//        for (int i = 0; i < questionId.size(); i++) {
+//            Integer quesId = questionId.get(i);
+//
+//            // Kiểm tra xem question có tồn tại trong danh sách không
+//            Question existingQuestion = findQuestionById(existingQuestions, quesId);
+//
+//            // Cập nhật thông tin của question
+//            existingQuestion.setQuestionContent(newQuestionContent.get(i));
+//            existingQuestion.setQuestionType(newQuestionType.get(i));
+//            existingQuestion.setImageURL(newImageURL.get(i));
+//            existingQuestion.setVideoURL(newVideoURL.get(i));
+//            questionRepositoty.save(existingQuestion);
+//            // Lấy danh sách các answer trong question
+//            List<Answer> existingAnswers = existingQuestion.getAnswers();
+//
+//            // Cập nhật thông tin của các answer
+//            for (int j = 0; j < answerId.get(i).size(); j++) {
+//                Integer ansId = answerId.get(i).get(j);
+//
+//                // Kiểm tra xem answer có tồn tại trong danh sách không
+//               Answer existingAnswer = findAnswerByAnswerId(existingAnswers, ansId);
+//
+//                // Cập nhật thông tin của answer
+//                existingAnswer.setAnswerContent(newAnswerContent.get(i).get(j));
+//                existingAnswer.setIsCorrect(newIsCorrect.get(i).get(j));
+//                answerRepository.save(existingAnswer);
+//            }
+//        }
+//
+//        return quizRepository.save(quiz);
+//    }
+
     @Override
-    public Quiz updateAll(Integer quizId, String newQuizName, Integer newTimeLimit, Boolean newIsCompleted,
-                          List<Integer> questionId, List<String> newQuestionContent, List<String> newQuestionType,
-                          List<String> newImageURL, List<String> newVideoURL,
-                          List<List<Integer>> answerId, List<List<String>> newAnswerContent, List<List<Boolean>> newIsCorrect) {
-        // Kiểm tra xem quiz có tồn tại không
-        Quiz quiz = quizRepository.findById(quizId)
-                .orElseThrow(() -> new EntityNotFoundException("Quiz not found with id: " + quizId));
+    @Transactional
+    public Boolean updateQuizWithQuestionsAndAnswers(Integer quizId, Quiz updatedQuiz) {
+        try {
+            Quiz existingQuiz = quizRepository.findById(quizId).orElse(null);
 
-        // Cập nhật thông tin của quiz
-        quiz.setQuizName(newQuizName);
-        quiz.setTimeLimit(newTimeLimit);
-        quiz.setIsCompleted(newIsCompleted);
+            if (existingQuiz != null) {
+                // Update quiz details
+                existingQuiz.setQuizName(updatedQuiz.getQuizName());
+                existingQuiz.setTimeLimit(updatedQuiz.getTimeLimit());
 
-        // Lấy danh sách các question trong quiz
-        List<Question> existingQuestions = quiz.getQuestions();
+                // Update questions and answers
+                for (Question updatedQuestion : updatedQuiz.getQuestions()) {
+                    Question existingQuestion = findQuestionById(existingQuiz.getQuestions(), updatedQuestion.getQuestionId());
 
-        // Cập nhật thông tin của các question
-        for (int i = 0; i < questionId.size(); i++) {
-            Integer quesId = questionId.get(i);
+                    if (existingQuestion != null) {
+                        // Update question details
+                        existingQuestion.setQuestionContent(updatedQuestion.getQuestionContent());
+                        existingQuestion.setQuestionType(updatedQuestion.getQuestionType());
 
-            // Kiểm tra xem question có tồn tại trong danh sách không
-            Question existingQuestion = findQuestionById(existingQuestions, quesId);
+                        // Update answers
+                        for (Answer updatedAnswer : updatedQuestion.getAnswers()) {
+                            Answer existingAnswer = findAnswerByAnswerId(existingQuestion.getAnswers(), updatedAnswer.getAnswerId());
 
-            // Cập nhật thông tin của question
-            existingQuestion.setQuestionContent(newQuestionContent.get(i));
-            existingQuestion.setQuestionType(newQuestionType.get(i));
-            existingQuestion.setImageURL(newImageURL.get(i));
-            existingQuestion.setVideoURL(newVideoURL.get(i));
-            questionRepositoty.save(existingQuestion);
-            // Lấy danh sách các answer trong question
-            List<Answer> existingAnswers = existingQuestion.getAnswers();
+                            if (existingAnswer != null) {
+                                // Update answer details
+                                existingAnswer.setAnswerContent(updatedAnswer.getAnswerContent());
+                                existingAnswer.setIsCorrect(updatedAnswer.getIsCorrect());
+                            } else {
+                                // Handle the case where the answer is not found
+                                existingQuestion.getAnswers().add(updatedAnswer);
+                            }
+                        }
+                    } else {
+                        // Handle the case where the question is not found
+                        existingQuiz.getQuestions().add(updatedQuestion);
+                    }
+                }
 
-            // Cập nhật thông tin của các answer
-            for (int j = 0; j < answerId.get(i).size(); j++) {
-                Integer ansId = answerId.get(i).get(j);
+                quizRepository.save(existingQuiz);
+                return true;
+            } else {
 
-                // Kiểm tra xem answer có tồn tại trong danh sách không
-               Answer existingAnswer = findAnswerByAnswerId(existingAnswers, ansId);
-
-                // Cập nhật thông tin của answer
-                existingAnswer.setAnswerContent(newAnswerContent.get(i).get(j));
-                existingAnswer.setIsCorrect(newIsCorrect.get(i).get(j));
-                answerRepository.save(existingAnswer);
+                return false;
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
         }
-
-        return quizRepository.save(quiz);
     }
+
     @Override
     public Question findQuestionById(List<Question> questions, Integer quesId) {
         for (Question question : questions) {

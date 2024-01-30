@@ -49,8 +49,9 @@
           <label th:for="${'questions[' + questionIndex.index + '].answers[' + answerIndex.index + '].answerContent'}">Answer Content:</label>
           <input type="text" th:id="${'answerContent' + questionIndex.index + answerIndex.index}" th:field="${'questions[' + questionIndex.index + '].answers[' + answerIndex.index + '].answerContent'}" required>
 
-          <label th:for="${'questions[' + questionIndex.index + '].answers[' + answerIndex.index + '].correct'}">Is Correct:</label>
-          <input type="checkbox" th:id="${'isCorrect' + questionIndex.index + answerIndex.index}" th:field="${'questions[' + questionIndex.index + '].answers[' + answerIndex.index + '].correct'}" >
+          <label th:for="${'questions[' + questionIndex.index + '].answers[' + answerIndex.index + '].isCorrect'}">Is Correct:</label>
+          <input type="checkbox" th:id="${'isCorrect' + questionIndex.index + answerIndex.index}"
+                 th:field="${'questions[' + questionIndex.index + '].answers[' + answerIndex.index + '].isCorrect'}" th:checked="${true}" >
         </div>
       </div>
 
@@ -78,7 +79,7 @@
         <input type="text" required th:id="${'questions[' + questionIndex + '].answers[' + answersContainer.childElementCount + '].answerContent'}" name="${'questions[' + questionIndex + '].answers[' + answersContainer.childElementCount + '].answerContent'}">
 
         <label for="isCorrect">Is Correct:</label>
-        <input type="checkbox" th:id="${'questions[' + questionIndex + '].answers[' + answersContainer.childElementCount + '].correct'}" name="${'questions[' + questionIndex + '].answers[' + answersContainer.childElementCount + '].correct'}">
+        <input type="checkbox" th:id="${'questions[' + questionIndex + '].answers[' + answersContainer.childElementCount + '].isCorrect'}" name="${'questions[' + questionIndex + '].answers[' + answersContainer.childElementCount + '].isCorrect'}">
       `;
 
     answersContainer.appendChild(answerDiv);
@@ -108,7 +109,7 @@
             <input type="text" required th:id="${'answerContent' + questionIndex + '0'}" name="${'questions[' + questionIndex + '].answers[0].answerContent'}">
 
             <label for="isCorrect">Is Correct:</label>
-            <input type="checkbox" th:id="${'isCorrect' + questionIndex + '0'}" name="${'questions[' + questionIndex + '].answers[0].correct'}">
+            <input type="checkbox" th:id="${'isCorrect' + questionIndex + '0'}" name="${'questions[' + questionIndex + '].answers[0].isCorrect'}">
           </div>
         </div>
 

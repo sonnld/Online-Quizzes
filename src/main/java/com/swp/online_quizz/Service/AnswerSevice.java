@@ -33,7 +33,7 @@ public class AnswerSevice implements IAnswerService {
     public boolean createAnswer1(Answer answer, Integer questionId) {
         try {
             Question existingQuestion = questionService.getQuestionById(questionId);
-            answer.setIsCorrect(true);
+            //answer.setIsCorrect(true);
             answer.setQuestion(existingQuestion);
             answerRepository.save(answer);
             return true; // Nếu không có ngoại lệ, trả về true
@@ -59,7 +59,7 @@ public class AnswerSevice implements IAnswerService {
         answerRepository.save(existingAnswer);
     }
     @Override
-    public Boolean updateAnswer(Integer id, Answer answer) {
+    public Boolean updateAnswer1(Integer id, Answer answer) {
         try {
             Answer uAnswer = answerRepository.getReferenceById(id);
             uAnswer.setAnswerContent(answer.getAnswerContent());

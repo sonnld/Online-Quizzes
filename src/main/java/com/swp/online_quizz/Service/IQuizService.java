@@ -23,11 +23,14 @@ public interface IQuizService {
     @Transactional
     Boolean updateQuizByQuizId1(Integer id, Quiz quiz);
 
+//    @Transactional
+//    Quiz updateAll(Integer quizId, String newQuizName, Integer newTimeLimit, Boolean newIsCompleted,
+//                   List<Integer> questionIds, List<String> newQuestionContents, List<String> newQuestionTypes,
+//                   List<String> newImageURLs, List<String> newVideoURLs,
+//                   List<List<Integer>> answerIds, List<List<String>> newAnswerContents, List<List<Boolean>> newIsCorrects);
+
     @Transactional
-    Quiz updateAll(Integer quizId, String newQuizName, Integer newTimeLimit, Boolean newIsCompleted,
-                   List<Integer> questionIds, List<String> newQuestionContents, List<String> newQuestionTypes,
-                   List<String> newImageURLs, List<String> newVideoURLs,
-                   List<List<Integer>> answerIds, List<List<String>> newAnswerContents, List<List<Boolean>> newIsCorrects);
+    Boolean updateQuizWithQuestionsAndAnswers(Integer quizId, Quiz updatedQuiz);
 
     Question findQuestionById(List<Question> questions, Integer quesId);
 

@@ -15,5 +15,5 @@ public interface IAnswerService {
     @Transactional
     void updateAnswer(Integer answerId, String newAnswerContent, Boolean newIsCorrect);
 
-    Boolean updateAnswer(Integer id, Answer answer);
+    Boolean updateAnswer1(Integer id, Answer answer);
 }
