@@ -1,7 +1,9 @@
 package com.swp.online_quizz.Entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
@@ -11,6 +13,8 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "Users")
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @Column(name = "UserID", nullable = false)

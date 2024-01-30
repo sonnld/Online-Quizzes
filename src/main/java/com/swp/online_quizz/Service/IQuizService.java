@@ -18,6 +18,9 @@ public interface IQuizService {
                                       Integer newTimeLimit, Boolean newIsCompleted);
 
     @Transactional
+    Boolean updateQuizProgress(Integer id, Quiz quiz);
+
+    @Transactional
     Quiz updateAll(Integer quizId, String newQuizName, Integer newTimeLimit, Boolean newIsCompleted,
                    List<Integer> questionIds, List<String> newQuestionContents, List<String> newQuestionTypes,
                    List<String> newImageURLs, List<String> newVideoURLs,

@@ -43,4 +43,17 @@ public class AnswerSevice implements IAnswerService {
         // Save the updated answer
         answerRepository.save(existingAnswer);
     }
+    @Override
+    public Boolean updateAnswer(Integer id, Answer answer) {
+        try {
+            Answer uAnswer = answerRepository.getReferenceById(id);
+            uAnswer.setAnswerContent(answer.getAnswerContent());
+            uAnswer.setIsCorrect(answer.getIsCorrect());
+            this.answerRepository.save(uAnswer);
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
 }

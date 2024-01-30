@@ -12,7 +12,7 @@
 <body>
 <h1>Update Quiz</h1>
 
-<form id="quizForm" action="/quiz/updateAll/${quiz.quizId}" th:action="@{'/quiz/updateAll/' + ${quiz.quizId}}" th:object="${quiz}" method="post">
+<form id="quizForm" action="/quizzes/updateAll/${quiz.quizId}" th:action="@{'/quizzes/updateAll/' + ${quiz.quizId}}" th:object="${quiz}" method="post">
     <label for="quizName">Quiz Name:</label>
     <input type="text" id="quizName" name="quizName" th:value="${quiz.getQuizName()}" required>
 
@@ -21,9 +21,6 @@
 
 <!--    <label for="subjectName">Subject Name:</label>-->
 <!--    <input type="text" id="subjectName" name="subjectName" th:value="${quiz.subject.getSubjectName()}" required>-->
-
-    <label for="newIsCompleted">Is Completed:</label>
-    <input type="checkbox" id="newIsCompleted" name="newIsCompleted" th:checked="${quiz.getIsCompleted()}">
 
     <hr>
 
@@ -62,7 +59,7 @@
 
             <button type="button" onclick="addAnswer(this)">Add Answer</button>
         </div>
-
+        </div>
     </div>
 
     <button type="button" onclick="addQuestion()">Add Question</button>

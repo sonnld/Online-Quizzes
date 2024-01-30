@@ -21,6 +21,8 @@ public interface IQuestionService {
     Question updateQuestion(Integer questionId, String newQuestionContent, String newQuestionType, String newImageURL, String newVideoURL);
 
 
+    Boolean updateQuestion(Integer id, Question question);
+
     List<Question> getQuestionsByQuizId(Integer quizId);
 
     @Transactional

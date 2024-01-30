@@ -56,6 +56,19 @@ public class QuestionService implements IQuestionService {
         return questionRepositoty.save(existingQuestion);
     }
     @Override
+    public Boolean updateQuestion(Integer id, Question question) {
+        try {
+            Question uQuestion = questionRepositoty.getReferenceById(id);
+            uQuestion.setQuestionContent(question.getQuestionContent());
+            uQuestion.setQuestionType(question.getQuestionType());
+            this.questionRepositoty.save(uQuestion);
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+    @Override
     public List<Question> getQuestionsByQuizId(Integer quizId) {
         // Kiểm tra xem quiz có tồn tại không
         Quiz existingQuiz = quizRepository.findById(quizId)

@@ -12,7 +12,7 @@
 <body>
 <h1>Create Quiz</h1>
 
-<form id="quizForm" action="/quiz/createAll" th:action="@{/quiz/createAll}" th:object="${quiz}" method="post">
+<form id="quizForm" action="/quizzes/createAll" th:action="@{/quizzes/createAll}" th:object="${quiz}" method="post">
   <label for="quizName">Quiz Name:</label>
   <input type="text" id="quizName" name="quizName"  required>
 
@@ -62,8 +62,9 @@
   <button type="button" onclick="addQuestion()">Add Question</button>
   <hr>
 
-  <button type="submit" >Create Quiz</button>
+  <button type="button" onclick="submitForms()">Create Quiz</button>
 </form>
+
 
 <script th:inline="javascript">
   function addAnswer(button) {
@@ -116,13 +117,12 @@
             `;
 
     questionsContainer.appendChild(newQuestionDiv);
-
-  // function submitForms() {
-  //   // Submit all three forms
-  //   document.getElementById('quizForm').submit();
-    // document.getElementById('questionForm').submit();
-    // document.getElementById('answerForm').submit();
   }
+    function submitForms() {
+      // Submit the main quiz form
+      document.getElementById('quizForm').submit();
+    }
+
 </script>
 </body>
 </html>

@@ -1,6 +1,8 @@
 package com.swp.online_quizz.Service;
 
 import com.swp.online_quizz.Entity.*;
+import com.swp.online_quizz.Repository.AnswerRepository;
+import com.swp.online_quizz.Repository.QuestionRepositoty;
 import com.swp.online_quizz.Repository.QuizRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,10 @@ public class QuizService implements IQuizService {
     private SubjectService subjectService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private QuestionRepositoty questionRepositoty;
+    @Autowired
+    private AnswerRepository answerRepository;
     @Autowired
     @Lazy
     private QuestionService questionService;
@@ -61,7 +67,20 @@ public class QuizService implements IQuizService {
         quizRepository.updateQuizByQuizId(quizId, newQuizName, newTimeLimit, newIsCompleted);
         return quizRepository.findByQuizId(quizId);
     }
-
+    @Transactional
+    @Override
+    public Boolean updateQuizProgress(Integer id, Quiz quiz) {
+        try {
+            Quiz uQuiz = quizRepository.getReferenceById(id);
+            uQuiz.setQuizName(quiz.getQuizName());
+            uQuiz.setTimeLimit(quiz.getTimeLimit());
+            this.quizRepository.save(uQuiz);
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
     @Transactional
     @Override
     public Quiz updateAll(Integer quizId, String newQuizName, Integer newTimeLimit, Boolean newIsCompleted,
@@ -92,7 +111,7 @@ public class QuizService implements IQuizService {
             existingQuestion.setQuestionType(newQuestionType.get(i));
             existingQuestion.setImageURL(newImageURL.get(i));
             existingQuestion.setVideoURL(newVideoURL.get(i));
-
+            questionRepositoty.save(existingQuestion);
             // Lấy danh sách các answer trong question
             List<Answer> existingAnswers = existingQuestion.getAnswers();
 
@@ -106,7 +125,7 @@ public class QuizService implements IQuizService {
                 // Cập nhật thông tin của answer
                 existingAnswer.setAnswerContent(newAnswerContent.get(i).get(j));
                 existingAnswer.setIsCorrect(newIsCorrect.get(i).get(j));
-
+                answerRepository.save(existingAnswer);
             }
         }
 
@@ -115,7 +134,7 @@ public class QuizService implements IQuizService {
     @Override
     public Question findQuestionById(List<Question> questions, Integer quesId) {
         for (Question question : questions) {
-            if (question.getQuestionId().equals(quesId)) {
+            if (question.getQuestionId() == quesId) {
                 return question;
             }
         }

@@ -19,12 +19,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/quiz")
+@RequestMapping("/quizzes")
 public class QuizController
 {
     private final IQuizService iQuizService;
@@ -73,7 +75,7 @@ public class QuizController
         }
     }
     @PostMapping("/createAll")
-    public ResponseEntity<String> createQuizQuestionAnswer(
+    public RedirectView createQuizQuestionAnswer(
             @ModelAttribute("user") Quiz quiz,
             @RequestParam(name = "quizName") String quizName,
             @RequestParam(name = "timeLimit") Integer timeLimit,
@@ -96,24 +98,22 @@ public class QuizController
             // Create Answer
             iAnswerService.createAnswer(answerContent, createdQuestion.getQuestionId(), isCorrect);
 
-            return new ResponseEntity<>("Quiz, Question, and Answer created successfully", HttpStatus.CREATED);
+            return new RedirectView("/quizzes/list");
         } catch (Exception e) {
-            return new ResponseEntity<>("Failed to create Quiz, Question, and Answer. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new RedirectView("/quizzes/list");
         }
     }
     @GetMapping("/showCreateQuizPage")
     public String showCreateQuizPage() {
         return "createQuiz";
     }
-    @PutMapping("/update/{quizId}/{newQuizName}/{newTimeLimit}/{newIsCompleted}")
-
+    @PutMapping("/update/{quizId}/{newQuizName}/{newTimeLimit}")
     public ResponseEntity<Quiz> updateQuiz(
             @PathVariable Integer quizId,
             @PathVariable String newQuizName,
-            @PathVariable Integer newTimeLimit,
-            @PathVariable Boolean newIsCompleted
+            @PathVariable Integer newTimeLimit
     ) {
-        Optional<Quiz> updatedQuiz = quizService.updateQuizByQuizId(quizId, newQuizName, newTimeLimit, newIsCompleted);
+        Optional<Quiz> updatedQuiz = quizService.updateQuizByQuizId(quizId, newQuizName, newTimeLimit, false);
 
         return updatedQuiz.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -158,24 +158,23 @@ public class QuizController
 //        }
 //    }
 @PostMapping("/updateAll/{quizId}")
-public ResponseEntity<String> updateQuizAll(//@ModelAttribute("user") Quiz quiz,
+public ResponseEntity<String> updateQuizAll(@ModelAttribute("user") Quiz quiz,
                                          @PathVariable Integer quizId,
                                          @RequestParam(name="quizName") String newQuizName,
                                          @RequestParam(name="timeLimit") Integer newTimeLimit,
-                                         @RequestParam(name="newIsCompleted") Boolean newIsCompleted,
                                          @RequestParam(name="questionId") List<Integer> questionId,
                                          @RequestParam(name="newQuestionContent") List<String> newQuestionContent,
                                          @RequestParam(name="newQuestionType") List<String> newQuestionType,
                                          @RequestParam(name="newImageURL", required = false) List<String> newImageURL,
                                          @RequestParam(name="newVideoURL", required = false) List<String> newVideoURL,
                                          @RequestParam(name="answerId") List<List<Integer>> answerId,
-                                         @RequestParam(name="newAnswerContent") List<List<String>> newAnswerContent,
-                                         @RequestParam(name="newIsCorrect") List<List<Boolean>> newIsCorrect) {
+                                         @RequestParam(name="newAnswerContent") List<List<String>> newAnswerContent) {
     try {
-         quizService.updateAll(quizId, newQuizName, newTimeLimit, newIsCompleted,
+
+        List<List<Boolean>> newIsCorrect = new ArrayList<>();
+         quizService.updateAll(quizId, newQuizName, newTimeLimit, false,
                 questionId, newQuestionContent, newQuestionType, newImageURL, newVideoURL,
                 answerId, newAnswerContent, newIsCorrect);
-
         return new ResponseEntity<>("Quiz updated successfully", HttpStatus.OK);
     } catch (EntityNotFoundException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
