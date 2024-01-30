@@ -1,15 +1,9 @@
 package com.swp.online_quizz.Controller.HomePage;
 
-import com.swp.online_quizz.Entity.Answer;
-import com.swp.online_quizz.Entity.Question;
-import com.swp.online_quizz.Entity.Quiz;
+import com.swp.online_quizz.Entity.*;
 
-import com.swp.online_quizz.Entity.Subject;
 import com.swp.online_quizz.Repository.QuizRepository;
-import com.swp.online_quizz.Service.IAnswerService;
-import com.swp.online_quizz.Service.IQuestionService;
-import com.swp.online_quizz.Service.IQuizService;
-import com.swp.online_quizz.Service.QuizService;
+import com.swp.online_quizz.Service.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,6 +11,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
@@ -42,8 +37,11 @@ public class QuizController
     @Autowired
     private IQuestionService iQuestionService;
     @Autowired
+    private IUserService iUserService;
+    @Autowired
     private IAnswerService iAnswerService;
-
+    @Autowired
+    private ISubjectService iSubjectService;
    @GetMapping("/all")
 
     public List<Quiz> getAll(){
@@ -74,33 +72,51 @@ public class QuizController
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Transactional
     @PostMapping("/createAll")
-    public RedirectView createQuizQuestionAnswer(
-            @ModelAttribute("quiz") Quiz quiz,
-            @RequestParam(name = "quizName") String quizName,
-            @RequestParam(name = "timeLimit") Integer timeLimit,
-            @RequestParam(name = "subjectName") String subjectName,
-            @RequestParam(name = "teacherId") Integer teacherId,
-            @RequestParam(name = "questions[0].questionContent") String questionContent,
-            @RequestParam(name = "questions[0].questionType") String questionType,
-            @RequestParam(name = "imageURL", required = false) String imageURL,
-            @RequestParam(name = "videoURL", required = false) String videoURL,
-            @RequestParam(name = "questions[0].answers[0].answerContent") String answerContent,
-            @RequestParam(name = "questions[0].answers[0].correct") boolean isCorrect
-    ) {
-        try {
-            // Create Quiz
-            Quiz createdQuiz = quizService.createQuiz(quizName, timeLimit, subjectName, teacherId);
+    public String createQuizWithQuestionsAndAnswers(@ModelAttribute("quiz") Quiz quiz
+                                                        ) {
 
-            // Create Question
-            Question createdQuestion = iQuestionService.createQuestion(createdQuiz.getQuizId(), questionContent, questionType, imageURL, videoURL);
+        String subjectName = quiz.getSubjectName();
 
-            // Create Answer
-            iAnswerService.createAnswer(answerContent, createdQuestion.getQuestionId(), isCorrect);
 
-            return new RedirectView("/quizzes/list");
-        } catch (Exception e) {
-            return new RedirectView("/quizzes/list");
+        Subject subject = new Subject();
+        subject.setSubjectName(subjectName);
+
+
+        quiz.setSubject(subject);
+        if (quiz.getTeacher() == null) {
+
+            User defaultTeacher = iUserService.getUserById(1);
+            quiz.setTeacher(defaultTeacher);
+        }
+        boolean quizCreated = quizService.createQuiz1(quiz);
+
+        if (quizCreated) {
+
+            for (Question question : quiz.getQuestions()) {
+
+                question.setQuizID(quiz);
+
+
+                iQuestionService.createQuestion1(question);
+
+
+                for (Answer answer : question.getAnswers()) {
+
+                    answer.setQuestion(question);
+
+
+                    iAnswerService.createAnswer1(answer, question.getQuestionId());
+                }
+            }
+
+            // Redirect to a success page or do further processing
+            return "redirect:/quizzes/list";
+        } else {
+            // Handle the case where the quiz creation failed
+            return "redirect:/quizzes/createAll";
         }
     }
     @GetMapping("/showCreateQuizPage")

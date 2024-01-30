@@ -59,6 +59,24 @@ public class QuizService implements IQuizService {
 
         return savedQuiz;
     }
+    @Override
+    public boolean createQuiz1(Quiz quiz) {
+        try {
+            Subject existingSubject = subjectService.createOrUpdateSubject(quiz.getSubject().getSubjectName());
+            User teacher = userService.getUserById(quiz.getTeacher().getUserId());
+
+            quiz.setSubject(existingSubject);
+            quiz.setTeacher(teacher);
+            quiz.setIsCompleted(false);
+
+            Quiz savedQuiz = quizRepository.save(quiz);
+
+            return true; // Nếu không có ngoại lệ, trả về true
+        } catch (Exception e) {
+            e.printStackTrace(); // Xử lý ngoại lệ nếu cần
+            return false; // Nếu có ngoại lệ, trả về false
+        }
+    }
 
     @Transactional
     @Override
@@ -69,7 +87,7 @@ public class QuizService implements IQuizService {
     }
     @Transactional
     @Override
-    public Boolean updateQuizProgress(Integer id, Quiz quiz) {
+    public Boolean updateQuizByQuizId1(Integer id, Quiz quiz) {
         try {
             Quiz uQuiz = quizRepository.getReferenceById(id);
             uQuiz.setQuizName(quiz.getQuizName());

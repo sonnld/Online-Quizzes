@@ -15,6 +15,9 @@ public interface IQuestionService {
 
     Question createQuestion(Integer quizId, String questionContent, String questionType, String imageURL, String videoURL);
 
+
+    boolean createQuestion1(Question question);
+
     public Question getQuestionById(Integer questionId);
 
     @Transactional

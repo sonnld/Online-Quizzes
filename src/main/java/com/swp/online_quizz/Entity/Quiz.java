@@ -36,6 +36,9 @@ public class Quiz {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Subject subject;
 
+    @Column(name = "SubjectName", length = 100)
+    private String subjectName; // Thêm cột subjectName
+
     @Column(name = "QuizName", length = 100)
     private String quizName;
 
@@ -48,9 +51,9 @@ public class Quiz {
     @OneToMany(mappedBy = "quizID")
     @JsonManagedReference
     private List<Question> questions = new ArrayList<>();
-    public Quiz(User teacher, Subject subject, String quizName, Integer timeLimit, Boolean isCompleted) {
+    public Quiz(User teacher, Subject subjectName, String quizName, Integer timeLimit, Boolean isCompleted) {
         this.teacher = teacher;
-        this.subject = subject;
+        this.subject = subjectName;
         this.quizName = quizName;
         this.timeLimit = timeLimit;
         this.isCompleted = isCompleted;

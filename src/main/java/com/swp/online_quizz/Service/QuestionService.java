@@ -35,6 +35,20 @@ public class QuestionService implements IQuestionService {
         question.setQuizID(existingQuiz);
         return questionRepositoty.save(question);
     }
+
+    @Override
+    public boolean createQuestion1(Question question) {
+        try {
+            Quiz existingQuiz = quizService.getQuizById(question.getQuizID().getQuizId());
+            question.setQuizID(existingQuiz);
+            questionRepositoty.save(question);
+            return true; // Nếu không có ngoại lệ, trả về true
+        } catch (Exception e) {
+            e.printStackTrace(); // Xử lý ngoại lệ nếu cần
+            return false; // Nếu có ngoại lệ, trả về false
+    }
+}
+
     @Override
     public Question getQuestionById(Integer questionId) {
             return questionRepositoty.findById(questionId).orElse(null);

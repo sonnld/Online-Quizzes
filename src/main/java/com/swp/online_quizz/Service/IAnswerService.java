@@ -10,6 +10,8 @@ public interface IAnswerService {
     Answer createAnswer(String answerContent, Integer questionId,boolean isCorrect);
 
 
+    boolean createAnswer1(Answer answer, Integer questionId);
+
     @Transactional
     void updateAnswer(Integer answerId, String newAnswerContent, Boolean newIsCorrect);
 

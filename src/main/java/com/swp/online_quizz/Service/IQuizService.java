@@ -14,11 +14,14 @@ public interface IQuizService {
     Quiz createQuiz(String quizName, Integer timeLimit, String subject, Integer teacherId);
 
 
+    boolean createQuiz1(Quiz quiz);
+
     Optional<Quiz> updateQuizByQuizId(Integer quizId, String newQuizName,
                                       Integer newTimeLimit, Boolean newIsCompleted);
 
+
     @Transactional
-    Boolean updateQuizProgress(Integer id, Quiz quiz);
+    Boolean updateQuizByQuizId1(Integer id, Quiz quiz);
 
     @Transactional
     Quiz updateAll(Integer quizId, String newQuizName, Integer newTimeLimit, Boolean newIsCompleted,

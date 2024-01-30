@@ -28,6 +28,21 @@ public class AnswerSevice implements IAnswerService {
         answer.setQuestion(existingQuestion);
         return answerRepository.save(answer);
     }
+
+    @Override
+    public boolean createAnswer1(Answer answer, Integer questionId) {
+        try {
+            Question existingQuestion = questionService.getQuestionById(questionId);
+            answer.setIsCorrect(true);
+            answer.setQuestion(existingQuestion);
+            answerRepository.save(answer);
+            return true; // Nếu không có ngoại lệ, trả về true
+        } catch (Exception e) {
+            e.printStackTrace(); // Xử lý ngoại lệ nếu cần
+            return false; // Nếu có ngoại lệ, trả về false
+        }
+    }
+
     @Override
     @Transactional
 
