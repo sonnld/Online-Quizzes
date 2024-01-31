@@ -32,15 +32,15 @@ public class QuestionService implements IQuestionService {
     public Question createQuestion(Integer quizId, String questionContent, String questionType, String imageURL, String videoURL) {
         Quiz existingQuiz = quizService.getQuizById(quizId);
         Question question = new Question(questionContent,questionType, imageURL,videoURL);
-        question.setQuizID(existingQuiz);
+        question.setQuiz(existingQuiz);
         return questionRepositoty.save(question);
     }
 
     @Override
     public boolean createQuestion1(Question question) {
         try {
-            Quiz existingQuiz = quizService.getQuizById(question.getQuizID().getQuizId());
-            question.setQuizID(existingQuiz);
+            Quiz existingQuiz = quizService.getQuizById(question.getQuiz().getQuizId());
+            question.setQuiz(existingQuiz);
             questionRepositoty.save(question);
             return true; // Nếu không có ngoại lệ, trả về true
         } catch (Exception e) {
@@ -53,6 +53,12 @@ public class QuestionService implements IQuestionService {
     public Question getQuestionById(Integer questionId) {
             return questionRepositoty.findById(questionId).orElse(null);
     }
+
+    @Override
+    public Question findQuestionById(Integer questionId) {
+        return questionRepositoty.getReferenceById(questionId);
+    }
+
     @Override
     @Transactional
     public Question updateQuestion(Integer questionId, String newQuestionContent, String newQuestionType, String newImageURL, String newVideoURL) {

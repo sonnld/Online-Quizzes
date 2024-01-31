@@ -48,7 +48,7 @@ public class Quiz {
     @Column(name = "IsCompleted")
     private Boolean isCompleted;
 
-    @OneToMany(mappedBy = "quizID")
+    @OneToMany(mappedBy = "quiz")
     @JsonManagedReference
     private List<Question> questions = new ArrayList<>();
     public Quiz(User teacher, Subject subjectName, String quizName, Integer timeLimit, Boolean isCompleted) {

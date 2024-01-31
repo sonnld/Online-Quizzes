@@ -43,6 +43,11 @@ public class QuizService implements IQuizService {
         return quizRepository.findAll();
     }
 
+    @Override
+    public Quiz findQuizById(Integer quizId) {
+        return quizRepository.getReferenceById(quizId);
+    }
+
     public Quiz getQuizById(Integer quizId) {
         return quizRepository.findById(quizId)
                 .orElseThrow(() -> new RuntimeException("Not found ID: " + quizId));

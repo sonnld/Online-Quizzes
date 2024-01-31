@@ -3,6 +3,7 @@ package com.swp.online_quizz.Service;
 import com.swp.online_quizz.Entity.Answer;
 import com.swp.online_quizz.Entity.Question;
 import com.swp.online_quizz.Repository.AnswerRepository;
+import com.swp.online_quizz.Repository.QuestionRepositoty;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,8 @@ import java.util.List;
 public class AnswerSevice implements IAnswerService {
     @Autowired
     private AnswerRepository answerRepository;
-
+    @Autowired
+    private QuestionRepositoty questionRepositoty;
     @Autowired
     private QuestionService questionService;
     @Override
@@ -57,6 +59,15 @@ public class AnswerSevice implements IAnswerService {
 
         // Save the updated answer
         answerRepository.save(existingAnswer);
+    }
+    @Override
+    public List<Answer> getQuestionsByQuizId(Integer questionId) {
+
+        Question existingQuestion = questionRepositoty.findById(questionId)
+                .orElseThrow(() -> new EntityNotFoundException("Quiz not found with id: " + questionId));
+
+
+        return existingQuestion.getAnswers();
     }
     @Override
     public Boolean updateAnswer1(Integer id, Answer answer) {

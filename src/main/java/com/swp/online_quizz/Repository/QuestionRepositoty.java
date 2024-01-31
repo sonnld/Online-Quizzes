@@ -22,6 +22,6 @@ public interface QuestionRepositoty extends JpaRepository<Question, Integer> {
     );
 
     @Modifying
-    @Query("DELETE FROM Question q WHERE q.quizID = :quizID")
+    @Query("DELETE FROM Question q WHERE q.quiz = :quizID")
     void deleteQuestionById(@Param("quizID") Integer quizID);
 }

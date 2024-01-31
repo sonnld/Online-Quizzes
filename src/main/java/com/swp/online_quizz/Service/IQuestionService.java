@@ -19,6 +19,7 @@ public interface IQuestionService {
     boolean createQuestion1(Question question);
 
     public Question getQuestionById(Integer questionId);
+    Question findQuestionById(Integer questionId);
 
     @Transactional
     Question updateQuestion(Integer questionId, String newQuestionContent, String newQuestionType, String newImageURL, String newVideoURL);

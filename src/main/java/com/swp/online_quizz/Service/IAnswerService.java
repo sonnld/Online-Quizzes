@@ -15,5 +15,7 @@ public interface IAnswerService {
     @Transactional
     void updateAnswer(Integer answerId, String newAnswerContent, Boolean newIsCorrect);
 
+    List<Answer> getQuestionsByQuizId(Integer questionId);
+
     Boolean updateAnswer1(Integer id, Answer answer);
 }

@@ -4,19 +4,15 @@ import com.swp.online_quizz.Entity.*;
 
 import com.swp.online_quizz.Repository.QuizRepository;
 import com.swp.online_quizz.Service.*;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -97,7 +93,7 @@ public class QuizController
 
             for (Question question : quiz.getQuestions()) {
 
-                question.setQuizID(quiz);
+                question.setQuiz(quiz);
 
 
                 iQuestionService.createQuestion1(question);
@@ -106,8 +102,6 @@ public class QuizController
                 for (Answer answer : question.getAnswers()) {
 
                     answer.setQuestion(question);
-
-
                     iAnswerService.createAnswer1(answer, question.getQuestionId());
                 }
             }
@@ -199,15 +193,38 @@ public class QuizController
 //    }
 //}
 @PostMapping("/updateAll/{quizId}")
-public String processUpdateQuizForm(@PathVariable Integer quizId, @ModelAttribute Quiz updatedQuiz) {
-    // Update the quiz data, including nested questions and answers
-    Boolean success = quizService.updateQuizWithQuestionsAndAnswers(quizId, updatedQuiz);
-    if (success) {
-        return "redirect:/quizzes/list";
-    } else {
+public String processUpdateQuizForm(@PathVariable Integer quizId, @ModelAttribute Quiz quiz) {
 
-        return "updateQuiz";
+    Quiz oldQuiz = iQuizService.findQuizById(quizId);
+
+    oldQuiz.setQuizName(quiz.getQuizName());
+    oldQuiz.setTimeLimit(quiz.getTimeLimit());
+    oldQuiz.setQuestions(quiz.getQuestions());
+    iQuizService.updateQuizByQuizId1(quizId, oldQuiz);
+
+    for (Question question : quiz.getQuestions()) {
+        List<Question> oldQuestion = oldQuiz.getQuestions();
+        question.setQuiz(quiz);
+        Question olQuestion = iQuestionService.findQuestionById(question.getQuestionId());
+        if (oldQuestion == null) {
+            iQuestionService.createQuestion1(olQuestion);
+            System.out.println("Create successfull!");
+        } else {
+            olQuestion.setQuestionContent(question.getQuestionContent());
+            olQuestion.setQuestionType(question.getQuestionType());
+            iQuestionService.updateQuestion1(question.getQuestionId(), question);
+
+
+            for (Answer answer : question.getAnswers()) {
+
+                answer.setQuestion(question);
+                iAnswerService.updateAnswer1(answer.getAnswerId(), answer);
+            }
+        }
+        return "redirect:/quizzes/list";
+
     }
+    return "redirect:/quizzes/list";
 }
     @GetMapping("/showUpdateQuizPage/{quizId}")
     public String getUpdateQuizForm(@PathVariable Integer quizId, Model model) {

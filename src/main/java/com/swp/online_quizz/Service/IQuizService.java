@@ -11,6 +11,8 @@ import java.util.Optional;
 public interface IQuizService {
     List<Quiz> getALl();
 
+    Quiz findQuizById(Integer quizId);
+
     Quiz createQuiz(String quizName, Integer timeLimit, String subject, Integer teacherId);
 
 

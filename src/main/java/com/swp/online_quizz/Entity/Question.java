@@ -2,7 +2,6 @@ package com.swp.online_quizz.Entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -25,7 +24,7 @@ public class Question {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "QuizID")
     @JsonBackReference
-    private Quiz quizID;
+    private Quiz quiz;
 
     @Lob
     @Column(name = "QuestionContent")
