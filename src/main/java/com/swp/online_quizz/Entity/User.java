@@ -1,22 +1,30 @@
 package com.swp.online_quizz.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Set;
 
-@Getter
-@Setter
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
+
 @Entity
 @Table(name = "Users")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
     @Id
-    @Column(name = "UserID", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "UserID")
     private Integer userId;
 
     @Column(name = "Username", nullable = false, length = 50)
@@ -32,7 +40,7 @@ public class User {
     private String role;
 
     @Column(name = "JoinDate")
-    private Instant joinDate;
+    private LocalDateTime joinDate;
 
     @Column(name = "FirstName", length = 50)
     private String firstName;
@@ -58,4 +66,7 @@ public class User {
     @Column(name = "IsActive")
     private Boolean isActive;
 
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    private Set<QuizAttempt> listQuizAttempts;
 }

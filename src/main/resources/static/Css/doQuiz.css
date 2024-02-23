@@ -1,0 +1,234 @@
+.Header {
+    background-color: #80d0c7;
+}
+#time{
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
+}
+#time .circle {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#time .circle svg {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    transform: rotate(270deg);
+}
+#time .circle svg circle {
+    width: 100%;
+    height: 100%; 
+    fill: transparent;
+    stroke-width: 8;
+    stroke: #282828;
+    stroke-linecap: round;
+    transform: translate(5px, 5px);
+}
+#time .circle svg circle:nth-child(2) {
+    stroke: var(--clr);
+    stroke-dasharray: 214;
+    stroke-dashoffset: 214;
+}
+#time .circle .timeLimit {
+    position: absolute;
+    text-align: center;
+    transform: translateY(-10px);
+    font-weight: 500;
+}
+#time .circle div span {
+    position: absolute;
+    transform: translateX(-50%) translateY(-8px);
+    font-size: 0.35em;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+.timeLimit {
+    font-size: 30px;
+}
+#time .dots{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+#time .dots::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    width: 15px;
+    height: 15px;
+    background: var(--clr);
+    border-radius: 50%;
+    box-shadow: 0 0 20px var(--clr),
+    0 0 60px var(--clr);
+
+}
+
+.Container h2{
+    font-size: 20px;
+}
+.Container{
+    margin: 0 auto;
+    max-width: 90%;
+}
+.Container h2{
+    font-size: 20px;
+}
+.card-contenain {
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.card-contenain .card{
+    display: flex;
+    flex-direction: row !important;
+    justify-content: space-between;
+    align-items: flex-start;
+    border: none;
+}
+.card .info {
+    margin-right: 50px;
+}
+.card .content{
+    margin-left: 30px;
+}
+.info h3,
+.qno {
+    font-size: x-large;
+    text-align: center;
+    text-align: center;
+        margin: 20px 0px;
+        background: -webkit-linear-gradient(90deg,
+                rgba(138, 100, 235, 1) 0%,
+                rgba(99, 229, 223, 1) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+}
+.active {
+    background-color: #80d0c7;
+}
+.qn_buttons {
+    max-width: 800px;
+    margin: 0 auto;
+}
+.card-text {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.multipages{
+    margin: 5px;
+}
+.mod_quiz-prev-nav,
+.mod_quiz-next-nav {
+    margin: 10px;
+    /* Khoảng cách giữa các nút */
+}
+#timeRemaining {
+    margin: 10px 20px;
+    font-weight: bold;
+    font-size: large;
+}
+.qtext h1 {
+    text-align: center;
+    margin: 20px 0px;
+        background: -webkit-linear-gradient(90deg,
+                rgba(138, 100, 235, 1) 0%,
+                rgba(99, 229, 223, 1) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+}
+
+.radio-button__input:checked+.radio-button__label .radio-button__custom {
+    transform: translateY(-50%) scale(0.9);
+    border: 5px solid #4c8bf5;
+    color: #4c8bf5;
+}
+
+.radio-button__input:checked+.radio-button__label {
+    color: #4c8bf5;
+}
+
+.radio-button__label:hover .radio-button__custom {
+    transform: translateY(-50%) scale(1.2);
+    border-color: #4c8bf5;
+    box-shadow: 0 0 10px #4c8bf580;
+}
+.multipages{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap  ;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.button-load {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 40px;
+    margin-bottom: 200px;
+}
+
+.button-load button {
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.button-load .button {
+    height: 50px;
+    width: 200px;
+    position: relative;
+    background-color: transparent;
+    cursor: pointer;
+    border: 2px solid;
+    overflow: hidden;
+    border-radius: 30px;
+    color: #333;
+    transition: all 0.5s ease-in-out;
+}
+
+.button-load .btn-txt {
+    z-index: 1;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+.button-load .type1::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    transition: all 0.5s ease-in-out;
+    background: rgb(138, 100, 235);
+        background: radial-gradient(circle, rgba(138, 100, 235, 1) 0%, rgba(99, 229, 223, 1) 100%);
+    border-radius: 30px;
+    visibility: hidden;
+    height: 10px;
+    width: 10px;
+    z-index: -1;
+}
+
+.button-load .button:hover {
+    box-shadow: 1px 1px 200px #252525;
+    color: #fff;
+    border: none;
+}
+
+.button-load .type1:hover::after {
+    visibility: visible;
+    transform: scale(100) translateX(2px);
+}

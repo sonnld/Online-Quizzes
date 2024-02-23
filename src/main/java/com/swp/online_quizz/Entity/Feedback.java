@@ -1,12 +1,17 @@
 package com.swp.online_quizz.Entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
+@Table(name = "Feedback")
 @Getter
 @Setter
-@Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Feedback {
     @Id
     @Column(name = "FeedbackID", nullable = false)
@@ -14,7 +19,7 @@ public class Feedback {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AttemptID")
-    private QuizAttempt quizAttempt;
+    private QuizAttempt attempt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UserID")

@@ -1,7 +1,7 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{HomeHead :: head}"></head>
-
+<link th:href="@{Css/Home.css}" rel="stylesheet">
 <body id="top">
 
 <main>
@@ -14,23 +14,34 @@
 
                 <div class="col-lg-8 col-12 mx-auto">
                     <h1 class="text-white text-center">Test. Learn. Enjoy</h1>
-
                     <h6 class="text-center">Easy to use for teachers and students</h6>
-
-                    <form method="get" class="custom-form mt-4 pt-2 mb-lg-0 mb-5" role="search">
+                    <form id="joinForm" class="custom-form mt-4 pt-2 mb-lg-0 mb-5" role="search">
                         <div class="input-group input-group-lg">
-                                    <span class="input-group-text bi-search" id="basic-addon1">
-
-                                    </span>
-
-                            <input name="keyword" type="search" class="form-control" id="keyword"
-                                   placeholder="Test, Code join class,  ..." aria-label="Search">
-
-                            <button type="submit" class="form-control">Join</button>
-
+                            <span class="input-group-text bi-search" id="basic-addon1"></span>
+                            <input type="search" name="classCode" class="form-control" placeholder=" Code join class,  ..."
+                                   aria-label="Search">
+                            <button type="submit" class="form-control" >Join</button>
                         </div>
+                        <p  id="message" th:text="${mess}" ></p>
                     </form>
+
                 </div>
+                <script type="text/javascript">
+                    // Hàm để ẩn thông báo sau 3 giây
+                    function hideMessage() {
+                        var messageElement = document.getElementById("message");
+                        if (messageElement) {
+                            setTimeout(function () {
+                                messageElement.style.display = "none";
+                            }, 3000); // 3 giây
+                        }
+                    }
+                    // Gọi hàm hideMessage khi trang đã tải xong
+                    window.onload = hideMessage;
+                </script>
+
+
+            </div>
 
             </div>
         </div>
@@ -50,19 +61,26 @@
         <form method="get" class="custom-form mt-4 pt-2 mb-lg-0 mb-5" role="search">
             <div class="container-fluid">
                 <div class="row">
-                    <ul class="nav nav-tabs " id="myTab" role="tablist">
-                        <li class="nav-item" role="presentation" th:each="subject : ${listSubject}">
-                            <button class="nav-link active"
-                                    name="keyword"
-                                    type="submit"
-                            ><a th:href="@{'?keyword='+ ${subject.subjectName} + '#section_2'}"
-                                th:text="${subject.subjectName}" style="color: #000000"></a></button>
+                    <ul class="nav nav-tabs"  >
+                        <li class="nav-item"  th:each="subject : ${listSubject}">
+                            <a class="nav-link active"
+                               th:href="@{${keyword!=null && keyword!='' ? '?keyword='+keyword+'&':'?' }+'subject='+ ${subject.subjectName} +${min!= null && min!=''&&max!= null && max!=''?'&min='+min+'&max='+max:''}+ '#section_2'}"
+                               th:text="${subject.subjectName}"
+                               style="color: #000000"></a>
                         </li>
                     </ul>
-
                 </div>
             </div>
         </form>
+        <div class="filter-container">
+            <label class="filter-button" for="filterCheckbox">Time</label>
+            <input type="checkbox" id="filterCheckbox">
+            <div class="filter-options">
+                <span><a th:href="@{${keyword!=null && keyword!='' ? '?keyword='+keyword+'&':'?' }+'pageNo=1'+'&min=0'+'&max=30'+${subject!=null && subject!='' ? '&subject='+subject:''} +'#section_2'}">0-30 Minute</a></span></br>
+                <span><a th:href="@{${keyword!=null && keyword!='' ? '?keyword='+keyword+'&':'?' }+'pageNo=1'+'&min=30'+'&max=60'+${subject!=null && subject!='' ? '&subject='+subject:''} + '#section_2'}">30-60 Minute</a></span></br>
+                <span><a th:href="@{${keyword!=null && keyword!='' ? '?keyword='+keyword+'&':'?' }+'pageNo=1' +'&min=60'+'&max=150'+${subject!=null && subject!='' ? '&subject='+subject:''}+ '#section_2'}">60-150 Minute</a></span></br>
+            </div>
+        </div>
 
         <div class="container">
             <div class="row">
@@ -73,7 +91,7 @@
                             <div class="row">
                                 <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-0" th:each="quizzes : ${listQuiz}">
                                     <div class="custom-block bg-white shadow-lg">
-                                        <a href="/search?keyword=co">
+                                        <a th:href="@{/quizzes/{quizID}(quizID = ${quizzes.quizId})}">
                                             <div class="d-flex">
                                                 <div>
                                                     <h5 class="mb-2" th:text="${quizzes.quizName}"></h5>
@@ -94,11 +112,14 @@
         </div>
         <div class="box-footer">
             <ul class="pagination">
-                <li th:if="${currentPage>1}"><a th:href="@{${keyword!=null && keyword!='' ? '?keyword='+keyword+'&':'?' }+'pageNo='+ ${currentPage-1} + '#section_2'}">«</a></li>
+                <li th:if="${currentPage>1}"><a
+                        th:href="@{${keyword!=null && keyword!='' ? '?keyword='+keyword+'&':'?' }+'pageNo='+ ${currentPage-1} +${min!= null && min!=''&&max!= null && max!=''?'&min='+min+'&max='+max:''}+${subject!=null && subject!='' ? '&subject='+subject:''}+ '#section_2'}">«</a>
+                </li>
                 <li th:each="i:${#numbers.sequence(1,totalPage)}" th:classappend="${currentPage == i ? 'active' : ''}">
-                    <a th:href="@{${keyword!=null && keyword!='' ? '?keyword='+keyword+'&':'?' }+'pageNo='+ ${i} + '#section_2'}"
+                    <a th:href="@{${keyword!=null && keyword!='' ? '?keyword='+keyword+'&':'?' }+'pageNo='+ ${i} +${min!= null && min!=''&&max!= null && max!=''?'&min='+min+'&max='+max:''}+${subject!=null && subject!='' ? '&subject='+subject:''}+ '#section_2'}"
                        th:text="${i}"></a></li>
-                <li th:if="${currentPage<totalPage}"><a th:href="@{${keyword!=null && keyword!='' ? '?keyword='+keyword+'&':'?' }+'pageNo='+ ${currentPage+1} + '#section_2'}">»</a>
+                <li th:if="${currentPage<totalPage}"><a
+                        th:href="@{${keyword!=null && keyword!='' ? '?keyword='+keyword+'&':'?' }+'pageNo='+ ${currentPage+1} +${min!= null && min!=''&&max!= null && max!=''?'&min='+min+'&max='+max:''}+${subject!=null && subject!='' ? '&subject='+subject:''}+ '#section_2'}">»</a>
                 </li>
             </ul>
         </div>
@@ -123,11 +144,10 @@
                             </div>
 
                             <li>
-                                <h4 class="text-white mb-3">Search your favourite topic</h4>
+                                <h4 class="text-white mb-3">Join classes </h4>
 
-                                <p class="text-white">Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                                    Reiciendis, cumque magnam? Sequi, cupiditate quibusdam alias illum sed esse ad
-                                    dignissimos libero sunt, quisquam numquam aliquam? Voluptas, accusamus omnis?</p>
+                                <p class="text-white">the website can help you join teacher-created classes easily.
+                                    By using the classCode provided by the teacher, we will then enter the code and join the class</p>
 
                                 <div class="icon-holder">
                                     <i class="bi-search"></i>
@@ -135,23 +155,22 @@
                             </li>
 
                             <li>
-                                <h4 class="text-white mb-3">Bookmark &amp; Keep it for yourself</h4>
+                                <h4 class="text-white mb-3">Search your favourite topic</h4>
 
-                                <p class="text-white">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sint
-                                    animi necessitatibus aperiam repudiandae nam omnis est vel quo, nihil repellat quia
-                                    velit error modi earum similique odit labore. Doloremque, repudiandae?</p>
+                                <p class="text-white">The website can offer many options in subjects.
+                                    We can easily search for quizzes based on subjects or quiz name.
+                                    If you combine both of these search methods, you will achieve results easily</p>
 
                                 <div class="icon-holder">
-                                    <i class="bi-bookmark"></i>
+                                    <i class="bi-search"></i>
                                 </div>
                             </li>
 
                             <li>
                                 <h4 class="text-white mb-3">Read &amp; Enjoy</h4>
 
-                                <p class="text-white">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Animi
-                                    vero quisquam, rem assumenda similique voluptas distinctio, iste est hic eveniet
-                                    debitis ut ducimus beatae id? Quam culpa deleniti officiis autem?</p>
+                                <p class="text-white">The website provides users with an interface that is easy to use, understand and experience.
+                                    Convenient testing of tests</p>
 
                                 <div class="icon-holder">
                                     <i class="bi-book"></i>
