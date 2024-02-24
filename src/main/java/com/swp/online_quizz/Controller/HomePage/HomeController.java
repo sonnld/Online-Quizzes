@@ -4,18 +4,18 @@ import com.swp.online_quizz.Entity.Classes;
 import com.swp.online_quizz.Entity.Quiz;
 import com.swp.online_quizz.Entity.Subject;
 import com.swp.online_quizz.Entity.User;
-import com.swp.online_quizz.Repository.ClassEnrollmentRepository;
 import com.swp.online_quizz.Repository.ClassesRepository;
 import com.swp.online_quizz.Repository.UsersRepository;
 import com.swp.online_quizz.Service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import com.swp.online_quizz.Repository.ClassEnrollmentRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,9 +41,8 @@ public class HomeController {
     @Autowired
     private ClassesRepository classesRepository;
 
-
     @RequestMapping("")
-    public String home(Model model,
+    public String Home(Model model,
                        @RequestParam(required = false) String keyword,
                        @RequestParam(required = false) String subject,
                        @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
@@ -53,7 +52,28 @@ public class HomeController {
                        HttpServletRequest request) {
         List<Subject> listSubject = iSubjectService.getAll();
         Page<Quiz> listQuiz = iQuizzesService.searchAndFilterAndSubject(keyword, pageNo, min, max, subject);
-        int totalPage = listQuiz.getTotalPages();
+        String role = "ROLE_STUDENT";
+        // Thêm role Teacher
+        String role_Teacher = "ROLE_TEACHER";
+        String username = "";
+        int totalPage = listQuiz.getTotalPages(); // Lấy số trang từ listQuiz
+        if (classCode != null) {
+            if (request.getSession().getAttribute("authentication") != null) {
+                Authentication authentication = (Authentication) request.getSession().getAttribute("authentication");
+                username = authentication.getName();
+            }
+            Optional<User> userOptional = usersRepository.findByUsername(username);
+            if (userOptional.isEmpty() || !role.equals(userOptional.get().getRole())) {
+                return "redirect:/login";
+            }
+            //nếu có thì lấy ra user
+            if (role.equals(userOptional.get().getRole())) {
+                Integer user1 = userOptional.get().getUserId();
+                iClassesService.joinClass(classCode, user1);
+            }
+            model.addAttribute("classCode", classCode);
+        }
+        totalPage = listQuiz.getTotalPages();
         model.addAttribute("listQuiz", listQuiz);
         model.addAttribute("totalPage", totalPage);
 
@@ -63,7 +83,7 @@ public class HomeController {
         User user = null;
         if (userOptional.isPresent()) {
             user = userOptional.get();
-            String role = user.getRole();
+            role = user.getRole();
             if ("ROLE_TEACHER".equals(role)) {
                 return "HomePageTeacher";
             }
@@ -71,7 +91,7 @@ public class HomeController {
             if ("ROLE_STUDENT".equals(role)) {
                 handleStudentLogic(model, user, keyword, pageNo, min, max, subject, classCode);
             }
-        }else {
+        } else {
             // Nếu người dùng chưa đăng nhập và nhập class code
             if (classCode != null && !classCode.isEmpty()) {
                 return "redirect:/login";
@@ -100,7 +120,7 @@ public class HomeController {
 
         Integer userId = user.getUserId();
         List<Integer> classIds = iClassEnrollmentService.getClassIdsByStudentId(userId);
-        List<Classes> classes = classesRepository.findAllById(classIds);
+        List<Classes> classes = this.classesRepository.findAllById(classIds);
         List<Integer> quizIds = iClassQuizzService.getQuizIdsByClassIds(classIds);
         Page<Quiz> filteredQuiz = iQuizzesService.searchAndFilterAndSubjectAndQuizIds(keyword, pageNo, min, max, subject, quizIds);
         int totalPage = filteredQuiz.getTotalPages();
@@ -124,20 +144,20 @@ public class HomeController {
     }
 
     @GetMapping("/information")
-    public String informationPage(Model model,HttpServletRequest request) {
+    public String informationPage(Model model, HttpServletRequest request) {
         String username = "";
-        if(request.getSession().getAttribute("authentication")!=null){
+        if (request.getSession().getAttribute("authentication") != null) {
             Authentication authentication = (Authentication) request.getSession().getAttribute("authentication");
-            username= authentication.getName();
+            username = authentication.getName();
         }
         Optional<User> userOptional = usersRepository.findByUsername(username);
-        if(userOptional.isEmpty()){
+        if (userOptional.isEmpty()) {
             //Nếu không có user thì làm gì đấy
             return "redirect:/login";
         }
         //nếu có thì lấy ra user
         User user = userOptional.get();
-        model.addAttribute("user",user);
+        model.addAttribute("user", user);
         return "Information.html";
     }
 //    @GetMapping("/join")
@@ -169,7 +189,6 @@ public class HomeController {
 //
 //            return "redirect:/";
 //        }
-
 
 
 }
