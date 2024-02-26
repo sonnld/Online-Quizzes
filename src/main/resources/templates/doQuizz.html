@@ -120,9 +120,9 @@
                 <div>
                     <a id="submitButton" onclick="submitQuiz()" class="mod_quiz-next-nav" href="/attempt/test"
                         th:href="@{/attempt/attemptQuiz/{quizID}/{attemptID}/finish(quizID = ${quiz.getQuizId()}, attemptID = ${attemp.getAttemptId()})}">
-                        <div class="othernav btn btn-secondary button type1">
+                        <button class="othernav btn btn-secondary button type1">
                             <span class="btn-txt">Finish quiz</span>
-                        </div>
+                        </button>
                     </a>
                     <script th:inline="javascript">
                         /*<![CDATA[*/
