@@ -96,13 +96,13 @@
                 <td th:text="${quiz.quizName}"></td>
                 <td th:text="${quiz.timeLimit}"></td>
                 <td><a class="button" th:href="@{'/quizzes/showUpdateQuizPage/' + ${quiz.quizId}}">Update</a></td>
-                <td><a class="button" th:href="@{'/quizzes/delete/' + ${quiz.quizId}}">Delete</a></td>
+                <td><a class="button" th:href="@{'/quizzes/delete/' + ${quiz.quizId}}">Delete</a>></td>
             </tr>
             </tbody>
         </table>
     </div>
-</div>
 
 
-</body>
+
+    </body>
 </html>
