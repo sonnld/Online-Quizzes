@@ -71,10 +71,6 @@ public class HomeController {
         if (userOptional.isPresent()) {
             user = userOptional.get();
             String role = user.getRole();
-            if ("ROLE_TEACHER".equals(role)) {
-                return "HomePageTeacher";
-            }
-
             if ("ROLE_STUDENT".equals(role)) {
                 handleStudentLogic(model, user, keyword, pageNo, min, max, subject, classCode);
             }
@@ -91,6 +87,10 @@ public class HomeController {
         model.addAttribute("subject", subject);
         model.addAttribute("currentPage", pageNo);
         model.addAttribute("listSubject", listSubject);
+        if ("ROLE_TEACHER".equals(userOptional.get().getRole())) {
+            handleStudentLogic(model, user, keyword, pageNo, min, max, subject, classCode);
+            return "HomePageTeacher";
+        }
         return "HomePage";
     }
 
@@ -140,7 +140,7 @@ public class HomeController {
         return "Information.html";
     }
 
-       
+
     @GetMapping("/updateInformation")
     public String updateInformation(Model model, HttpServletRequest request) {
         Optional<User> userOptional = getUserFromSession(request);
@@ -154,14 +154,14 @@ public class HomeController {
 
     // Phương thức xử lý yêu cầu POST từ trang cập nhật thông tin người dùng
     @PostMapping("/updateInformation")
-    public String updateInformation(HttpServletRequest request,@ModelAttribute User updatedUser) {
+    public String updateInformation(HttpServletRequest request, @ModelAttribute User updatedUser) {
         Optional<User> userOptional = getUserFromSession(request);
         // Thực hiện cập nhật thông tin người dùng
-        if(userOptional.isEmpty()) {
+        if (userOptional.isEmpty()) {
             // Nếu không có người dùng, chuyển hướng đến trang đăng nhập
             return "redirect:/login";
         }
-         iUsersService.updateUser(userOptional.get().getUserId(),updatedUser);
+        iUsersService.updateUser(userOptional.get().getUserId(), updatedUser);
         return "redirect:/information";
     }
 }
