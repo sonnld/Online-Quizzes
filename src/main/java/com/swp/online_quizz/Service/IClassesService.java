@@ -26,4 +26,6 @@ public interface IClassesService {
 
     List<Classes> getAllClassByUserId(Integer userID);
     Page<Classes> getAllClassByUserId(Integer userID,Integer userId);
+
+    String getClassCodeByClassId(Integer classID);
 }

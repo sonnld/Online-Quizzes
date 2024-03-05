@@ -1,10 +1,11 @@
 package com.swp.online_quizz.Controller;
 
+import com.swp.online_quizz.Entity.ClassEnrollment;
 import com.swp.online_quizz.Entity.Classes;
 import com.swp.online_quizz.Entity.User;
+import com.swp.online_quizz.Repository.ClassEnrollmentRepository;
 import com.swp.online_quizz.Repository.UsersRepository;
-import com.swp.online_quizz.Service.ClassesService;
-import com.swp.online_quizz.Service.IUsersService;
+import com.swp.online_quizz.Service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,13 @@ public class ClassController {
     private UsersRepository usersRepository;
     @Autowired
     private IUsersService iUsersService;
+    @Autowired
+    private ClassEnrollmentService
+            classEnrollmentService;
+    @Autowired
+    private IClassesService iClassesService;
+    @Autowired
+    private UsersService usersService;
 
     @GetMapping("/listClasses")
     public String index(Model model, @RequestParam(value = "className", required = false) String className, @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo
@@ -50,7 +58,7 @@ public class ClassController {
             listClasses = this.classesService.searchClassesByClassesNameAndUserID(className, pageNo, userOptional.get().getUserId());
             model.addAttribute("className", className);
         }
-        model.addAttribute("TotalClass",TotalClass.size());
+        model.addAttribute("TotalClass", TotalClass.size());
         model.addAttribute("totalPage", listClasses.getTotalPages());
         model.addAttribute("currentPage", pageNo);
         model.addAttribute("username", username); /// lấy class đầu tiên để lấy teacher
@@ -132,6 +140,76 @@ public class ClassController {
             redirectAttributes.addFlashAttribute("mss", "Delete Classes Unsucces!!!");
         }
         return "redirect:/Classes/listClasses";
+
+    }
+
+    @GetMapping("listClasses/{classId}")
+    public String listStudentinClass(Model model, @PathVariable("classId") Integer classId, @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+                                     @RequestParam(value = "firstName", required = false) String firstName, HttpServletRequest request) {
+        String username = "";
+        if (request.getSession().getAttribute("authentication") != null) {
+            Authentication authentication = (Authentication) request.getSession().getAttribute("authentication");
+            username = authentication.getName();
+        }
+        Optional<User> userOptional = usersRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            return "redirect:/login";
+        }
+        Page<ClassEnrollment> listStudent = this.classEnrollmentService.getAllStudentByClassId(classId, pageNo);
+        List<ClassEnrollment> listStudentSize = this.classEnrollmentService.getAllStudentByClassId(classId);
+        if (firstName != null) {
+            listStudent = this.classEnrollmentService.getAllStudentBySearch(classId, firstName, pageNo);
+        }
+        model.addAttribute("listStudents", listStudent);
+        model.addAttribute("size", listStudentSize.size());
+        model.addAttribute("nameTeacher", username);
+        model.addAttribute("currentPage", pageNo);
+        model.addAttribute("totalPage", listStudent.getTotalPages());
+        model.addAttribute("classId", classId);
+
+        return "ListStudentInClass";
+    }
+
+    @GetMapping("listClasses/{classId}/profile/{useID}")
+    public String profileStudent(Model model, @PathVariable("classId") Integer classId, @PathVariable("useID") Integer useID) {
+        User user = this.usersRepository.findByuserId(useID);
+        model.addAttribute("profileStudent", user);
+        model.addAttribute("classId", classId);
+        return "inforStudentInClass";
+    }
+
+    @GetMapping("listClasses/{classId}/addStudent")
+    public String addStudent(Model model, @PathVariable("classId") Integer classId) {
+        User user = new User();
+        model.addAttribute("userStudent", user);
+        model.addAttribute("classId",classId);
+
+        return "addStudent";
+    }
+
+    @PostMapping("listClasses/{classId}/addStudent")
+    public String AddStudentInClass(Model model, @PathVariable("classId") Integer classId, @ModelAttribute("userStudent") User user, RedirectAttributes redirectAttributes) {
+        Classes classes = this.classesService.findById(classId);
+        User user1 = this.usersService.getUsersByID(user.getUserId());
+        ClassEnrollment addStudent = new ClassEnrollment();
+        addStudent.setClasses(classes);
+        addStudent.setStudentID(user1);
+        if (this.classEnrollmentService.isAddStudentInClass(addStudent)) {
+            redirectAttributes.addFlashAttribute("mss", "Update Student Success");
+            return "redirect:/Classes/listClasses/{classId}";
+        } else {
+            return "addStudent";
+        }
+
+    }
+    @GetMapping("listClasses/{classId}/deleteStudent/{id}")
+    public String deleteStudent(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+        if (this.classEnrollmentService.deleteStudentInClass(id)) {
+            redirectAttributes.addFlashAttribute("mss", "Delete Student Success");
+        } else {
+            redirectAttributes.addFlashAttribute("mss", "Delete Student Unsucces!!!");
+        }
+        return "redirect:/Classes/listClasses/{classId}";
 
     }
 }

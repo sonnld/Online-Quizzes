@@ -26,6 +26,7 @@ public class ClassesService implements IClassesService {
 
     @Autowired
     private ClassEnrollmentRepository classEnrollmentRepository;
+
     @Override
     public void joinClass(String classCode, Integer studentId) {
 
@@ -130,5 +131,8 @@ public class ClassesService implements IClassesService {
         return new PageImpl<Classes>(allClasseById, pageable, classesRepository.getSizeAllClassByUserId(userID));
     }
 
-
+    @Override
+    public String getClassCodeByClassId(Integer classID) {
+        return this.getClassCodeByClassId(classID);
+    }
 }
