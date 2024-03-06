@@ -1,8 +1,6 @@
 package com.swp.online_quizz.Controller;
 
-import com.swp.online_quizz.Entity.ClassEnrollment;
-import com.swp.online_quizz.Entity.Classes;
-import com.swp.online_quizz.Entity.User;
+import com.swp.online_quizz.Entity.*;
 import com.swp.online_quizz.Repository.ClassEnrollmentRepository;
 import com.swp.online_quizz.Repository.UsersRepository;
 import com.swp.online_quizz.Service.*;
@@ -11,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +17,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -38,6 +38,14 @@ public class ClassController {
     private IClassesService iClassesService;
     @Autowired
     private UsersService usersService;
+    @Autowired
+    private ClassQuizzService classQuizzService;
+    @Autowired
+    private IQuizzesService iQuizzesService;
+    @Autowired
+    private QuestionsService questionsService;
+    @Autowired
+    private AnswerService answerService;
 
     @GetMapping("/listClasses")
     public String index(Model model, @RequestParam(value = "className", required = false) String className, @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo
@@ -53,7 +61,6 @@ public class ClassController {
         }
         Page<Classes> listClasses = this.classesService.getAllClassByUserId(userOptional.get().getUserId(), pageNo);
         List<Classes> TotalClass = this.classesService.getAllClassByUserId(userOptional.get().getUserId());
-
         if (className != null) {
             listClasses = this.classesService.searchClassesByClassesNameAndUserID(className, pageNo, userOptional.get().getUserId());
             model.addAttribute("className", className);
@@ -157,9 +164,12 @@ public class ClassController {
         }
         Page<ClassEnrollment> listStudent = this.classEnrollmentService.getAllStudentByClassId(classId, pageNo);
         List<ClassEnrollment> listStudentSize = this.classEnrollmentService.getAllStudentByClassId(classId);
+        List<ClassQuizz> listQuizInClass = this.classQuizzService.getQuizByClassId(classId);
+
         if (firstName != null) {
             listStudent = this.classEnrollmentService.getAllStudentBySearch(classId, firstName, pageNo);
         }
+        model.addAttribute("listQuizInClass", listQuizInClass);
         model.addAttribute("listStudents", listStudent);
         model.addAttribute("size", listStudentSize.size());
         model.addAttribute("nameTeacher", username);
@@ -182,7 +192,7 @@ public class ClassController {
     public String addStudent(Model model, @PathVariable("classId") Integer classId) {
         User user = new User();
         model.addAttribute("userStudent", user);
-        model.addAttribute("classId",classId);
+        model.addAttribute("classId", classId);
 
         return "addStudent";
     }
@@ -202,6 +212,7 @@ public class ClassController {
         }
 
     }
+
     @GetMapping("listClasses/{classId}/deleteStudent/{id}")
     public String deleteStudent(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
         if (this.classEnrollmentService.deleteStudentInClass(id)) {
@@ -211,5 +222,68 @@ public class ClassController {
         }
         return "redirect:/Classes/listClasses/{classId}";
 
+    }
+
+    @GetMapping("/listClasses/{classId}/createQuizz")
+    public String ShowCreateQuizInClass(Model model,
+                                        @RequestParam(value = "question", required = false) String question,
+                                        @PathVariable(value = "classId") Integer classId) {
+        Quiz quiz = iQuizzesService.getEmptyQuiz();
+        model.addAttribute("quiz", new Quiz());
+        List<String> questionContents = quiz.getListQuestions().stream()
+                .map(Question::getQuestionContent)
+                .collect(Collectors.toList());
+        Classes classes = this.classesService.findById(classId);
+        model.addAttribute("classes", classes);
+        model.addAttribute("questionContents", questionContents);
+        return "CreateQuizInClass";
+    }
+
+    @Transactional
+    @PostMapping("/listClasses/{classId}/createQuizz")
+    public String createQuizWithQuestionsAndAnswers(@ModelAttribute("quiz") Quiz quiz, HttpServletRequest request, @PathVariable(value = "classId") Integer classId) {
+        Classes classes = new Classes();
+        String subjectName = quiz.getSubjectName();
+        Subject subject = new Subject();
+        subject.setSubjectName(subjectName);
+        quiz.setSubject(subject);
+        String username = "";
+        if (request.getSession().getAttribute("authentication") != null) {
+            Authentication authentication = (Authentication) request.getSession().getAttribute("authentication");
+            username = authentication.getName();
+        }
+        Optional<User> userOptional = usersRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            return "redirect:/login";
+        } // nếu có thì lấy ra user
+        int userId = userOptional.get().getUserId();
+        User defaultTeacher = iUsersService.getUsersByID(userId);
+        quiz.setTeacher(defaultTeacher);
+        ClassQuizz classQuizz = new ClassQuizz();
+        boolean quizCreated = iQuizzesService.createQuiz1(quiz);
+        classes= this.classesService.getClassByClassId(classId);
+        if (quizCreated) {
+
+            for (Question question : quiz.getListQuestions()) {
+
+                question.setQuiz(quiz);
+
+                questionsService.createQuestion1(question);
+
+                for (Answer answer : question.getListAnswer()) {
+
+                    answer.setQuestion(question);
+                    answerService.createAnswer1(answer, question.getQuestionId());
+                }
+            }
+            boolean addQuizzInClass = classQuizzService.isAddQuizInClass(classes, quiz);
+            if (addQuizzInClass) {
+                return "redirect:/Classes/listClasses/{classId}";
+            } else {
+                return "createQuizz";
+            }
+        } else {
+            return "createQuizz";
+        }
     }
 }

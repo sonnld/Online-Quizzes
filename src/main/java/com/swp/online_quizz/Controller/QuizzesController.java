@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.swp.online_quizz.Entity.*;
+import com.swp.online_quizz.Service.*;
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -25,25 +27,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.swp.online_quizz.Dto.CreateQuizzByQuestionBank;
-import com.swp.online_quizz.Entity.Answer;
-import com.swp.online_quizz.Entity.Question;
-import com.swp.online_quizz.Entity.Quiz;
-import com.swp.online_quizz.Entity.QuizAttempt;
-import com.swp.online_quizz.Entity.Subject;
-import com.swp.online_quizz.Entity.User;
 import com.swp.online_quizz.Repository.QuizRepository;
 import com.swp.online_quizz.Repository.UsersRepository;
-import com.swp.online_quizz.Service.ExcelUploadService;
-import com.swp.online_quizz.Service.IAnswerService;
-import com.swp.online_quizz.Service.IClassQuizzService;
-import com.swp.online_quizz.Service.IFeedbackService;
-import com.swp.online_quizz.Service.IQuestionAttemptsService;
-import com.swp.online_quizz.Service.IQuestionsService;
-import com.swp.online_quizz.Service.IQuizAttemptsService;
-import com.swp.online_quizz.Service.IQuizProgressService;
-import com.swp.online_quizz.Service.IQuizzesService;
-import com.swp.online_quizz.Service.ISubjectService;
-import com.swp.online_quizz.Service.IUsersService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -79,6 +64,8 @@ public class QuizzesController {
     private UsersRepository usersRepository;
     @Autowired
     private ISubjectService iSubjectService;
+    @Autowired
+    private ClassesService classesService;
 
     @GetMapping("/all")
     public List<Quiz> getAll() {
@@ -99,7 +86,7 @@ public class QuizzesController {
         // nếu có thì lấy ra user
         int userId = userOptional.get().getUserId();
         List<Quiz> quizList = iQuizzesService.getQuizByUserId(userId); // Thay thế bằng phương thức lấy danh sách quiz
-                                                                       // từ Service
+        // từ Service
         model.addAttribute("quizList", quizList);
         return "showQuiz";
     }
@@ -161,7 +148,7 @@ public class QuizzesController {
 
     @GetMapping("/createQuizByListQuestions")
     public String showCreateQuizzPageByListQuestion(Model model,
-            @RequestParam(value = "question", required = false) String question) {
+                                                    @RequestParam(value = "question", required = false) String question) {
         List<Question> questions;
         if (question != null) {
             questions = this.iQuestionsService.getALlQuestionBySearch(question);
@@ -176,7 +163,7 @@ public class QuizzesController {
     @Transactional
     @PostMapping("/createQuizByListQuestion")
     public String createQuizWithListQuestions(@ModelAttribute("formObject") CreateQuizzByQuestionBank formObject,
-            HttpServletRequest request) {
+                                              HttpServletRequest request) {
         Quiz quiz = formObject.getQuiz();
         String subjectName = quiz.getSubjectName();
         Subject subject = new Subject();
@@ -286,7 +273,7 @@ public class QuizzesController {
 
     @GetMapping("/{quizID}")
     public String quizInfo(@PathVariable Integer quizID, HttpSession session, Model model, Authentication auth,
-            HttpServletRequest request) {
+                           HttpServletRequest request) {
         if (quizID == null) {
             return "notFoundQuiz";
         } else {
@@ -333,7 +320,7 @@ public class QuizzesController {
 
     @PostMapping("/uploadquizdata")
     public String uploadQuizData(@RequestParam("file") MultipartFile file, HttpSession session, Model model,
-            Authentication auth, HttpServletRequest request) throws IOException {
+                                 Authentication auth, HttpServletRequest request) throws IOException {
         String username = "";
         if (request.getSession().getAttribute("authentication") != null) {
             Authentication authentication = (Authentication) request.getSession().getAttribute("authentication");
@@ -368,4 +355,6 @@ public class QuizzesController {
             }
         }
     }
+
 }
+

@@ -77,24 +77,60 @@
             <div class="fs-5 totalClass">This class currently has <span th:text="${size}"></span> students</div>
         </div>
         <div class="col-sm-2 ">
-                        <div th:if="${not #strings.isEmpty(mss)}">
-                            <button type="button" class="btn btn-success" th:text="${mss}"></button>
-                        </div>
+            <div th:if="${not #strings.isEmpty(mss)}">
+                <button type="button" class="btn btn-success" th:text="${mss}"></button>
+            </div>
         </div>
         <div class="price-range col-sm-4 d-flex align-items-end">
             <form method="get" class="mx-sm-3 fromSearchClass">
                 <div class="input-group">
                     <input style="border-radius: 10px " name="firstName" th:value="${firstName}"
-                           class="form-control form-control-lg" type="text" placeholder="Search Class ..."
+                           class="form-control form-control-lg" type="text" placeholder="Search Student ..."
                            aria-describedby="button-addon2" autofocus>
                     <button style="border-radius: 10px" class="btn btn-secondary" id="button-addon2" type="submit">
                         Search
                     </button>
                 </div>
             </form>
-            <button type="button" class="btn btn-outline-secondary buttonAddClass"><a th:href="@{${classId}+'/addStudent'}">Add Student</a>
+            <button type="button" class="btn btn-outline-secondary buttonAddClass"><a
+                    th:href="@{${classId}+'/addStudent'}">Add Student</a>
+            </button>
+            <button type="button" class="btn btn-outline-secondary buttonAddQuiz"><a
+                    th:href="@{${classId}+'/createQuizz'}">Add Quiz</a>
             </button>
         </div>
+    </div>
+</div>
+<div class="container containerTableListQuiz">
+    <div class="table-wrapper-scroll-y my-custom-scrollbar ">
+
+        <table class="table table-bordered table-striped mb-0 tableListQuiz">
+            <thead>
+
+            </thead>
+            <tbody>
+            <td colspan="1" class="p-0">
+                <table class="table table-borderless ">
+                    <tbody >
+                    <tr>
+                        <th scope="col">No</th>
+                        <th scope="col" class="text-end">Quizz Name</th>
+
+                    </tr>
+                    <tr th:each="listQuiz,index:${listQuizInClass}">
+                        <td th:text="${index.count}"></td>
+                        <td class="textQuizName text-end text-center" th:text="${listQuiz.quiz.quizName}"></td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </td>
+
+            </tr>
+
+            </tbody>
+        </table>
+
     </div>
 </div>
 <div class="container">
@@ -109,6 +145,7 @@
 
                 <table class="table table-striped custom-table text-center">
                     <thead>
+
                     <tr>
                         <th scope="col">No</th>
                         <th scope="col">StudentID</th>
@@ -121,6 +158,7 @@
                     </tr>
                     </thead>
                     <tbody>
+
                     <tr th:each="student,index : ${listStudents}">
 
                         <td th:text="${index.count}"></td>
@@ -130,15 +168,18 @@
                         <td th:text="${student.studentID.address}"></td>
                         <td th:text="${student.studentID.dateOfBirth}"></td>
                         <td>
-                            <a th:href="@{${student.classes.classId}+'/profile/'+${student.studentID.userId}}" class="edit" title="View" data-toggle="tooltip"><i
+                            <a th:href="@{${student.classes.classId}+'/profile/'+${student.studentID.userId}}"
+                               class="edit" title="View" data-toggle="tooltip"><i
                                     class="fa-regular fa-eye"></i></a>
 
 
-                            <a th:href="@{${student.classes.classId}+'/deleteStudent/'+${student.enrollmentId}}" class="delete" title="Delete"
+                            <a th:href="@{${student.classes.classId}+'/deleteStudent/'+${student.enrollmentId}}"
+                               class="delete" title="Delete"
                                data-toggle="tooltip"><i
                                     class="fa-solid fa-trash-can"></i></a>
                         </td>
                     </tr>
+
                     </tbody>
                 </table>
             </div>
@@ -168,7 +209,6 @@
             </nav>
         </div>
     </div>
-</div>
 </div>
 <div class="footer">
     <div th:replace="HomeFooter :: footer"></div>

@@ -135,4 +135,9 @@ public class ClassesService implements IClassesService {
     public String getClassCodeByClassId(Integer classID) {
         return this.getClassCodeByClassId(classID);
     }
+
+    @Override
+    public Classes getClassByClassId(Integer classId) {
+        return this.classesRepository.getClassByClassId(classId);
+    }
 }

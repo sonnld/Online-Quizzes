@@ -25,5 +25,6 @@ public interface ClassesRepository extends JpaRepository<Classes, Integer> {
 
     @Query(value = "select c from Classes c join Fetch User u on c.teacher.userId = u.userId and c.teacher.userId = ?1 ")
     List<Classes> getAllByTeacherId(Integer userId, Pageable page);
-
+    @Query("select c from Classes c where c.classId = ?1")
+    Classes getClassByClassId(Integer classID);
 }
